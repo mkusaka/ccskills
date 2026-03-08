@@ -6,27 +6,22 @@ This repository converts Piebald's `system-prompts/skill-*.md` files into instal
 
 ## Usage
 
-Sync the default upstream source:
-
-```bash
-pnpm sync
-```
-
-Other useful commands:
-
-```bash
-pnpm sync --dry-run
-pnpm sync:related
-pnpm sync Piebald-AI/claude-code-system-prompts
-pnpm sync /path/to/local/claude-code-system-prompts
-```
-
 Install generated skills with the Skills CLI:
 
 ```bash
 npx skills add mkusaka/ccskills
 npx skills add mkusaka/ccskills@debugging
 npx skills add https://github.com/mkusaka/ccskills/tree/main/skills/debugging
+```
+
+If you maintain this repo locally, sync from upstream with:
+
+```bash
+pnpm sync
+pnpm sync --dry-run
+pnpm sync:related
+pnpm sync Piebald-AI/claude-code-system-prompts
+pnpm sync /path/to/local/claude-code-system-prompts
 ```
 
 ## Automation
