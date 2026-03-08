@@ -5,9 +5,9 @@
   "packageManager": "pnpm@10.30.3",
   "type": "module",
   "scripts": {
-    "sync": "node src/sync-piebald-skills.mjs",
-    "sync:related": "node src/sync-piebald-skills.mjs --selection skill-related",
+    "sync": "node --experimental-strip-types src/sync-piebald-skills.ts",
+    "sync:related": "node --experimental-strip-types src/sync-piebald-skills.ts --selection skill-related",
     "sync:pr": "bash ./scripts/sync_skills_pull_request.sh",
-    "test": "node --test"
+    "test": "node --experimental-strip-types --test test/*.test.ts"
   }
 }

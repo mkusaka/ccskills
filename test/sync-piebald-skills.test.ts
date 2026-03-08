@@ -13,7 +13,7 @@ import {
   parseSource,
   promptFileToSkillSlug,
   resolveLocalSourceDir
-} from "../src/sync-piebald-skills.mjs";
+} from "../src/sync-piebald-skills.ts";
 
 test("parseArgs supports source, selection, output dir, and dry-run", () => {
   const parsed = parseArgs([

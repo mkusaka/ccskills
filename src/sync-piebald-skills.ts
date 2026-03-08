@@ -1,17 +1,118 @@
 import { access, mkdir, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import { constants as fsConstants } from "node:fs";
 import path from "node:path";
+import { pathToFileURL } from "node:url";
+
+type Selection = "builtin-skills" | "skill-related";
+type FetchImpl = typeof fetch;
+
+interface ParsedArgs {
+  source: string;
+  outputDir: string;
+  selection: Selection;
+  dryRun: boolean;
+}
+
+interface LocalSource {
+  type: "local";
+  rootPath: string;
+}
+
+interface GitHubSource {
+  type: "github";
+  owner: string;
+  repo: string;
+  ref: string;
+  subpath: string;
+}
+
+type ParsedSource = LocalSource | GitHubSource;
+
+interface PromptMetadata {
+  name?: string;
+  description?: string;
+  ccVersion?: string;
+  variables?: string[];
+  [key: string]: string | string[] | undefined;
+}
+
+interface PromptFile {
+  filename: string;
+  relativePath: string;
+  content: string;
+  sourceUrl: string;
+}
+
+interface SourceInfo {
+  owner: string;
+  repo: string;
+  ref: string;
+  promptFiles: PromptFile[];
+}
+
+interface SkillSource {
+  owner: string;
+  repo: string;
+  ref: string;
+  path: string;
+}
+
+interface SkillDocument {
+  slug: string;
+  description: string;
+  originalName: string;
+  ccVersion: string;
+  sourceUrl: string;
+  source: SkillSource;
+  variables: string[];
+  body: string;
+}
+
+interface SyncManifest {
+  source?: string;
+  selection?: Selection;
+  skills: string[];
+}
+
+interface SyncOptions {
+  source?: string;
+  outputDir?: string;
+  selection?: Selection;
+  dryRun?: boolean;
+  fetchImpl?: FetchImpl;
+}
+
+interface SyncResult {
+  wrote: boolean;
+  outputDir: string;
+  skills: string[];
+}
+
+interface GitHubRepoInfo {
+  default_branch: string;
+}
+
+interface GitHubContentEntry {
+  type: "file" | "dir";
+  name: string;
+  path: string;
+  download_url: string | null;
+}
 
 export const DEFAULT_SOURCE =
   "https://github.com/Piebald-AI/claude-code-system-prompts/tree/main/system-prompts";
 export const DEFAULT_OUTPUT_DIR = "skills";
-export const DEFAULT_SELECTION = "builtin-skills";
+export const DEFAULT_SELECTION: Selection = "builtin-skills";
 export const MANIFEST_FILENAME = ".ccskills-sync.json";
 
-const SUPPORTED_SELECTIONS = new Set(["builtin-skills", "skill-related"]);
+const SUPPORTED_SELECTIONS = new Set<Selection>(["builtin-skills", "skill-related"]);
 
-function githubRequestHeaders() {
-  const headers = {
+function isSelection(value: string): value is Selection {
+  return SUPPORTED_SELECTIONS.has(value as Selection);
+}
+
+function githubRequestHeaders(): Record<string, string> {
+  const headers: Record<string, string> = {
     Accept: "application/vnd.github+json"
   };
 
@@ -22,7 +123,7 @@ function githubRequestHeaders() {
   return headers;
 }
 
-async function pathExists(targetPath) {
+async function pathExists(targetPath: string): Promise<boolean> {
   try {
     await access(targetPath, fsConstants.F_OK);
     return true;
@@ -31,7 +132,7 @@ async function pathExists(targetPath) {
   }
 }
 
-export function parseArgs(argv) {
+export function parseArgs(argv: string[]): ParsedArgs {
   let source = DEFAULT_SOURCE;
   let outputDir = DEFAULT_OUTPUT_DIR;
   let selection = DEFAULT_SELECTION;
@@ -57,7 +158,7 @@ export function parseArgs(argv) {
         throw new Error("--selection requires a value");
       }
 
-      if (!SUPPORTED_SELECTIONS.has(nextValue)) {
+      if (!isSelection(nextValue)) {
         throw new Error(
           `Unsupported --selection value "${nextValue}". Use one of: ${Array.from(
             SUPPORTED_SELECTIONS
@@ -90,7 +191,7 @@ export function parseArgs(argv) {
   };
 }
 
-export function parseSource(rawSource) {
+export function parseSource(rawSource: string): ParsedSource {
   const source = rawSource.trim();
 
   if (!source) {
@@ -150,7 +251,7 @@ export function parseSource(rawSource) {
   );
 }
 
-async function fetchJson(url, fetchImpl = fetch) {
+async function fetchJson<T>(url: string, fetchImpl: FetchImpl = fetch): Promise<T> {
   const response = await fetchImpl(url, {
     headers: githubRequestHeaders()
   });
@@ -160,10 +261,10 @@ async function fetchJson(url, fetchImpl = fetch) {
     throw new Error(`GitHub API request failed (${response.status}): ${url}\n${text}`);
   }
 
-  return response.json();
+  return (await response.json()) as T;
 }
 
-async function fetchText(url, fetchImpl = fetch) {
+async function fetchText(url: string, fetchImpl: FetchImpl = fetch): Promise<string> {
   const response = await fetchImpl(url, {
     headers: githubRequestHeaders()
   });
@@ -176,7 +277,7 @@ async function fetchText(url, fetchImpl = fetch) {
   return response.text();
 }
 
-function encodeGitHubPath(targetPath) {
+function encodeGitHubPath(targetPath: string): string {
   return targetPath
     .split("/")
     .filter(Boolean)
@@ -184,30 +285,38 @@ function encodeGitHubPath(targetPath) {
     .join("/");
 }
 
-async function resolveGitHubRef(parsedSource, fetchImpl = fetch) {
+async function resolveGitHubRef(
+  parsedSource: GitHubSource,
+  fetchImpl: FetchImpl = fetch
+): Promise<string> {
   if (parsedSource.ref) {
     return parsedSource.ref;
   }
 
-  const repoInfo = await fetchJson(
+  const repoInfo = await fetchJson<GitHubRepoInfo>(
     `https://api.github.com/repos/${parsedSource.owner}/${parsedSource.repo}`,
     fetchImpl
   );
   return repoInfo.default_branch;
 }
 
-async function fetchGitHubDirectoryEntries(parsedSource, directoryPath, ref, fetchImpl = fetch) {
+async function fetchGitHubDirectoryEntries(
+  parsedSource: GitHubSource,
+  directoryPath: string,
+  ref: string,
+  fetchImpl: FetchImpl = fetch
+): Promise<GitHubContentEntry[]> {
   const encodedPath = encodeGitHubPath(directoryPath);
   const pathSuffix = encodedPath ? `/${encodedPath}` : "";
   const url = `https://api.github.com/repos/${parsedSource.owner}/${parsedSource.repo}/contents${pathSuffix}?ref=${encodeURIComponent(
     ref
   )}`;
 
-  const payload = await fetchJson(url, fetchImpl);
+  const payload = await fetchJson<GitHubContentEntry | GitHubContentEntry[]>(url, fetchImpl);
   return Array.isArray(payload) ? payload : [payload];
 }
 
-export function matchesSelection(filename, selection) {
+export function matchesSelection(filename: string, selection: Selection): boolean {
   if (!filename.endsWith(".md")) {
     return false;
   }
@@ -223,12 +332,15 @@ export function matchesSelection(filename, selection) {
   throw new Error(`Unknown selection: ${selection}`);
 }
 
-export function promptFileToSkillSlug(filename) {
+export function promptFileToSkillSlug(filename: string): string {
   const baseName = filename.replace(/\.md$/, "");
   return baseName.startsWith("skill-") ? baseName.slice("skill-".length) : baseName;
 }
 
-export function extractPromptMetadata(markdown) {
+export function extractPromptMetadata(markdown: string): {
+  metadata: PromptMetadata;
+  body: string;
+} {
   const match = markdown.match(/^<!--\r?\n([\s\S]*?)\r?\n-->\r?\n?([\s\S]*)$/);
   if (!match) {
     throw new Error("Prompt file is missing the leading metadata comment block");
@@ -240,9 +352,9 @@ export function extractPromptMetadata(markdown) {
   };
 }
 
-export function parseCommentMetadata(rawMetadata) {
+export function parseCommentMetadata(rawMetadata: string): PromptMetadata {
   const lines = rawMetadata.split(/\r?\n/);
-  const metadata = {};
+  const metadata: PromptMetadata = {};
 
   for (let index = 0; index < lines.length; index += 1) {
     const line = lines[index];
@@ -313,7 +425,7 @@ export function parseCommentMetadata(rawMetadata) {
   return metadata;
 }
 
-function unquote(value) {
+function unquote(value: string): string {
   if (
     (value.startsWith("'") && value.endsWith("'")) ||
     (value.startsWith('"') && value.endsWith('"'))
@@ -324,11 +436,11 @@ function unquote(value) {
   return value;
 }
 
-function yamlString(value) {
+function yamlString(value: string): string {
   return JSON.stringify(value);
 }
 
-export function buildSkillDocument(skill) {
+export function buildSkillDocument(skill: SkillDocument): string {
   const lines = [
     "---",
     `name: ${yamlString(skill.slug)}`,
@@ -357,7 +469,10 @@ export function buildSkillDocument(skill) {
   return `${lines.join("\n")}\n${normalizedBody}`;
 }
 
-export async function resolveLocalSourceDir(rootPath, selection = DEFAULT_SELECTION) {
+export async function resolveLocalSourceDir(
+  rootPath: string,
+  selection: Selection = DEFAULT_SELECTION
+): Promise<string> {
   const resolvedRoot = path.resolve(rootPath);
   const directEntries = await readdir(resolvedRoot, { withFileTypes: true });
   const systemPromptsPath = path.join(resolvedRoot, "system-prompts");
@@ -372,10 +487,13 @@ export async function resolveLocalSourceDir(rootPath, selection = DEFAULT_SELECT
   return resolvedRoot;
 }
 
-async function readLocalPromptFiles(parsedSource, selection) {
+async function readLocalPromptFiles(
+  parsedSource: LocalSource,
+  selection: Selection
+): Promise<SourceInfo> {
   const sourceDir = await resolveLocalSourceDir(parsedSource.rootPath, selection);
   const entries = await readdir(sourceDir, { withFileTypes: true });
-  const promptFiles = [];
+  const promptFiles: PromptFile[] = [];
 
   for (const entry of entries) {
     if (!entry.isFile() || !matchesSelection(entry.name, selection)) {
@@ -383,11 +501,13 @@ async function readLocalPromptFiles(parsedSource, selection) {
     }
 
     const filePath = path.join(sourceDir, entry.name);
+    const relativePath =
+      path.basename(sourceDir) === "system-prompts" ? `system-prompts/${entry.name}` : entry.name;
     promptFiles.push({
       filename: entry.name,
-      relativePath: path.basename(sourceDir) === "system-prompts" ? `system-prompts/${entry.name}` : entry.name,
+      relativePath,
       content: await readFile(filePath, "utf8"),
-      sourceUrl: `file://${filePath}`
+      sourceUrl: `local:${relativePath}`
     });
   }
 
@@ -399,7 +519,11 @@ async function readLocalPromptFiles(parsedSource, selection) {
   };
 }
 
-async function readGitHubPromptFiles(parsedSource, selection, fetchImpl = fetch) {
+async function readGitHubPromptFiles(
+  parsedSource: GitHubSource,
+  selection: Selection,
+  fetchImpl: FetchImpl = fetch
+): Promise<SourceInfo> {
   const ref = await resolveGitHubRef(parsedSource, fetchImpl);
   let directoryPath = parsedSource.subpath;
 
@@ -417,12 +541,18 @@ async function readGitHubPromptFiles(parsedSource, selection, fetchImpl = fetch)
   );
 
   const promptFiles = await Promise.all(
-    markdownEntries.map(async (entry) => ({
-      filename: entry.name,
-      relativePath: entry.path,
-      content: await fetchText(entry.download_url, fetchImpl),
-      sourceUrl: `https://github.com/${parsedSource.owner}/${parsedSource.repo}/blob/${ref}/${entry.path}`
-    }))
+    markdownEntries.map(async (entry) => {
+      if (!entry.download_url) {
+        throw new Error(`GitHub did not return a download URL for ${entry.path}`);
+      }
+
+      return {
+        filename: entry.name,
+        relativePath: entry.path,
+        content: await fetchText(entry.download_url, fetchImpl),
+        sourceUrl: `https://github.com/${parsedSource.owner}/${parsedSource.repo}/blob/${ref}/${entry.path}`
+      };
+    })
   );
 
   return {
@@ -433,7 +563,11 @@ async function readGitHubPromptFiles(parsedSource, selection, fetchImpl = fetch)
   };
 }
 
-export async function collectPromptFiles(rawSource, selection, fetchImpl = fetch) {
+export async function collectPromptFiles(
+  rawSource: string,
+  selection: Selection,
+  fetchImpl: FetchImpl = fetch
+): Promise<SourceInfo> {
   const parsedSource = parseSource(rawSource);
 
   if (parsedSource.type === "local") {
@@ -443,7 +577,7 @@ export async function collectPromptFiles(rawSource, selection, fetchImpl = fetch
   return readGitHubPromptFiles(parsedSource, selection, fetchImpl);
 }
 
-export function normalizePromptToSkill(prompt, sourceInfo) {
+export function normalizePromptToSkill(prompt: PromptFile, sourceInfo: SourceInfo): SkillDocument {
   const { metadata, body } = extractPromptMetadata(prompt.content);
   const description = metadata.description;
   const originalName = metadata.name;
@@ -469,7 +603,7 @@ export function normalizePromptToSkill(prompt, sourceInfo) {
   };
 }
 
-async function loadManifest(outputDir) {
+async function loadManifest(outputDir: string): Promise<SyncManifest> {
   const manifestPath = path.join(outputDir, MANIFEST_FILENAME);
   if (!(await pathExists(manifestPath))) {
     return {
@@ -480,7 +614,7 @@ async function loadManifest(outputDir) {
   return JSON.parse(await readFile(manifestPath, "utf8"));
 }
 
-async function writeManifest(outputDir, manifest) {
+async function writeManifest(outputDir: string, manifest: SyncManifest): Promise<void> {
   const manifestPath = path.join(outputDir, MANIFEST_FILENAME);
   await writeFile(`${manifestPath}.tmp`, `${JSON.stringify(manifest, null, 2)}\n`, "utf8");
   await rm(manifestPath, { force: true });
@@ -494,7 +628,7 @@ export async function syncSkills({
   selection = DEFAULT_SELECTION,
   dryRun = false,
   fetchImpl = fetch
-} = {}) {
+}: SyncOptions = {}): Promise<SyncResult> {
   const resolvedOutputDir = path.resolve(outputDir);
   const sourceInfo = await collectPromptFiles(source, selection, fetchImpl);
   const normalizedSkills = sourceInfo.promptFiles
@@ -558,7 +692,7 @@ export async function syncSkills({
   };
 }
 
-async function main() {
+async function main(): Promise<void> {
   const options = parseArgs(process.argv.slice(2));
   const result = await syncSkills(options);
 
@@ -573,7 +707,9 @@ async function main() {
   }
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+const entryPoint = process.argv[1];
+
+if (entryPoint && import.meta.url === pathToFileURL(entryPoint).href) {
   main().catch((error) => {
     console.error(error.message);
     process.exitCode = 1;

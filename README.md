@@ -1,6 +1,8 @@
 # ccskills
 
-Piebald's Claude Code system prompt repository can be turned into installable `skills` packages, but `npx skills add` only installs directories that contain `SKILL.md` files with YAML frontmatter. This repo adds the missing normalization layer and keeps the generated skills under [`skills/`](/Users/masatomokusaka/src/github.com/mkusaka/ccskills/skills).
+Installable Claude Code skills generated from Piebald's published system prompts, with sync and PR automation included.
+
+Piebald's Claude Code system prompt repository can be turned into installable `skills` packages, but `npx skills add` only installs directories that contain `SKILL.md` files with YAML frontmatter. This repo adds the missing normalization layer and keeps the generated skills under [`./skills`](./skills).
 
 ## What Was Confirmed About `npx skills add`
 
@@ -19,7 +21,7 @@ Primary sources:
 
 ## Generated Output
 
-The generated directories in [`skills/`](/Users/masatomokusaka/src/github.com/mkusaka/ccskills/skills) are what `npx skills add mkusaka/ccskills` will discover.
+The generated directories in [`./skills`](./skills) are what `npx skills add mkusaka/ccskills` will discover.
 
 By default this repo syncs only upstream `skill-*.md` files:
 
@@ -70,13 +72,13 @@ npx skills add https://github.com/mkusaka/ccskills/tree/main/skills/debugging
 
 ## Automation
 
-This repo includes [`.github/workflows/sync-piebald-skills.yml`](/Users/masatomokusaka/src/github.com/mkusaka/ccskills/.github/workflows/sync-piebald-skills.yml), which runs daily at `03:17 UTC` and on `workflow_dispatch`.
+This repo includes [`./.github/workflows/sync-piebald-skills.yml`](./.github/workflows/sync-piebald-skills.yml), which runs daily at `03:17 UTC` and on `workflow_dispatch`.
 
 The workflow:
 
 - runs `pnpm sync`
 - runs `pnpm test`
-- if generated files changed, runs [`scripts/sync_skills_pull_request.sh`](/Users/masatomokusaka/src/github.com/mkusaka/ccskills/scripts/sync_skills_pull_request.sh)
+- if generated files changed, runs [`./scripts/sync_skills_pull_request.sh`](./scripts/sync_skills_pull_request.sh)
 - pushes `automation/piebald-skill-sync`
 - creates or updates a PR with `gh pr create` / `gh pr edit --body-file`
 - verifies the rendered body with `gh pr view --json body --jq .body`
