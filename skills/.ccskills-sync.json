@@ -1,0 +1,14 @@
+{
+  "source": "https://github.com/Piebald-AI/claude-code-system-prompts/tree/main/system-prompts",
+  "selection": "builtin-skills",
+  "skills": [
+    "build-with-claude-api",
+    "build-with-claude-api-reference-guide",
+    "create-verifier-skills",
+    "debugging",
+    "loop-slash-command",
+    "simplify",
+    "update-claude-code-config",
+    "verification-specialist"
+  ]
+}

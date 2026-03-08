@@ -1,0 +1,13 @@
+{
+  "name": "ccskills",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@10.30.3",
+  "type": "module",
+  "scripts": {
+    "sync": "node src/sync-piebald-skills.mjs",
+    "sync:related": "node src/sync-piebald-skills.mjs --selection skill-related",
+    "sync:pr": "bash ./scripts/sync_skills_pull_request.sh",
+    "test": "node --test"
+  }
+}
