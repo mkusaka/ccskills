@@ -1,0 +1,22 @@
+{
+  $schema: "https://docs.renovatebot.com/renovate-schema.json",
+  extends: ["config:best-practices", "group:definitelyTyped"],
+  packageRules: [
+    {
+      description: "Group minor and patch updates for production dependencies",
+      groupName: "dependencies (non-major)",
+      automerge: true,
+      automergeType: "pr",
+      matchDepTypes: ["dependencies"],
+      matchUpdateTypes: ["minor", "patch"],
+    },
+    {
+      description: "Group minor and patch updates for dev dependencies",
+      groupName: "devDependencies (non-major)",
+      automerge: true,
+      automergeType: "pr",
+      matchDepTypes: ["devDependencies"],
+      matchUpdateTypes: ["minor", "patch"],
+    },
+  ],
+}
