@@ -15,7 +15,7 @@ import {
   resolveLocalSourceDir,
 } from "../src/sync-piebald-skills.ts";
 
-test("parseArgs supports source, selection, output dir, and dry-run", () => {
+void test("parseArgs supports source, selection, output dir, and dry-run", () => {
   const parsed = parseArgs([
     "Piebald-AI/claude-code-system-prompts",
     "--selection",
@@ -33,7 +33,7 @@ test("parseArgs supports source, selection, output dir, and dry-run", () => {
   });
 });
 
-test("parseSource handles GitHub tree URLs", () => {
+void test("parseSource handles GitHub tree URLs", () => {
   const parsed = parseSource(
     "https://github.com/Piebald-AI/claude-code-system-prompts/tree/main/system-prompts",
   );
@@ -47,13 +47,13 @@ test("parseSource handles GitHub tree URLs", () => {
   });
 });
 
-test("parseSource handles local paths", () => {
+void test("parseSource handles local paths", () => {
   const parsed = parseSource("./fixtures");
   assert.equal(parsed.type, "local");
   assert.ok(parsed.rootPath.endsWith(path.join("ccskills", "fixtures")));
 });
 
-test("matchesSelection differentiates builtin and related skill prompts", () => {
+void test("matchesSelection differentiates builtin and related skill prompts", () => {
   assert.equal(matchesSelection("skill-debugging.md", "builtin-skills"), true);
   assert.equal(
     matchesSelection("system-prompt-skillify-current-session.md", "builtin-skills"),
@@ -66,12 +66,12 @@ test("matchesSelection differentiates builtin and related skill prompts", () => 
   assert.equal(matchesSelection("README.md", "skill-related"), false);
 });
 
-test("promptFileToSkillSlug drops only the leading skill- prefix", () => {
+void test("promptFileToSkillSlug drops only the leading skill- prefix", () => {
   assert.equal(promptFileToSkillSlug("skill-debugging.md"), "debugging");
   assert.equal(promptFileToSkillSlug("tool-description-skill.md"), "tool-description-skill");
 });
 
-test("extractPromptMetadata parses the HTML comment block and body", () => {
+void test("extractPromptMetadata parses the HTML comment block and body", () => {
   const prompt = `<!--
 name: 'Skill: Debugging'
 description: Instructions for debugging an issue
@@ -93,7 +93,7 @@ Use the logs.`;
   assert.equal(extracted.body, "# Debug Skill\nUse the logs.");
 });
 
-test("normalizePromptToSkill keeps source metadata and uses the filename slug", () => {
+void test("normalizePromptToSkill keeps source metadata and uses the filename slug", () => {
   const normalized = normalizePromptToSkill(
     {
       filename: "skill-debugging.md",
@@ -122,7 +122,7 @@ variables:
   assert.equal(normalized.source.path, "system-prompts/skill-debugging.md");
 });
 
-test("buildSkillDocument renders frontmatter that npx skills add can consume", () => {
+void test("buildSkillDocument renders frontmatter that npx skills add can consume", () => {
   const document = buildSkillDocument({
     slug: "debugging",
     description: "Instructions for debugging an issue",
@@ -147,7 +147,7 @@ test("buildSkillDocument renders frontmatter that npx skills add can consume", (
   assert.match(document, /\n---\n\n# Debug Skill\nUse the logs\.$/);
 });
 
-test("resolveLocalSourceDir prefers system-prompts when the repo root is passed", async () => {
+void test("resolveLocalSourceDir prefers system-prompts when the repo root is passed", async () => {
   const tempRoot = await mkdtemp(path.join(os.tmpdir(), "ccskills-local-"));
   const sourceRoot = path.join(tempRoot, "claude-code-system-prompts");
   const systemPromptsDir = path.join(sourceRoot, "system-prompts");

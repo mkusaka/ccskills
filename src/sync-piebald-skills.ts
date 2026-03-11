@@ -329,7 +329,7 @@ export function matchesSelection(filename: string, selection: Selection): boolea
     return filename.includes("skill");
   }
 
-  throw new Error(`Unknown selection: ${selection}`);
+  throw new Error("Unknown selection");
 }
 
 export function promptFileToSkillSlug(filename: string): string {
