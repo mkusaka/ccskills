@@ -113,7 +113,7 @@ function isSelection(value: string): value is Selection {
 
 function githubRequestHeaders(): Record<string, string> {
   const headers: Record<string, string> = {
-    Accept: "application/vnd.github+json"
+    Accept: "application/vnd.github+json",
   };
 
   if (process.env.GITHUB_TOKEN) {
@@ -161,8 +161,8 @@ export function parseArgs(argv: string[]): ParsedArgs {
       if (!isSelection(nextValue)) {
         throw new Error(
           `Unsupported --selection value "${nextValue}". Use one of: ${Array.from(
-            SUPPORTED_SELECTIONS
-          ).join(", ")}`
+            SUPPORTED_SELECTIONS,
+          ).join(", ")}`,
         );
       }
 
@@ -187,7 +187,7 @@ export function parseArgs(argv: string[]): ParsedArgs {
     source,
     outputDir,
     selection,
-    dryRun
+    dryRun,
   };
 }
 
@@ -207,12 +207,12 @@ export function parseSource(rawSource: string): ParsedSource {
   ) {
     return {
       type: "local",
-      rootPath: path.resolve(source)
+      rootPath: path.resolve(source),
     };
   }
 
   const githubTreeMatch = source.match(
-    /^https:\/\/github\.com\/([^/]+)\/([^/]+)\/tree\/([^/]+)(?:\/(.+))?\/?$/
+    /^https:\/\/github\.com\/([^/]+)\/([^/]+)\/tree\/([^/]+)(?:\/(.+))?\/?$/,
   );
   if (githubTreeMatch) {
     return {
@@ -220,7 +220,7 @@ export function parseSource(rawSource: string): ParsedSource {
       owner: githubTreeMatch[1],
       repo: githubTreeMatch[2].replace(/\.git$/, ""),
       ref: githubTreeMatch[3],
-      subpath: githubTreeMatch[4] ?? ""
+      subpath: githubTreeMatch[4] ?? "",
     };
   }
 
@@ -231,7 +231,7 @@ export function parseSource(rawSource: string): ParsedSource {
       owner: githubRepoMatch[1],
       repo: githubRepoMatch[2],
       ref: "",
-      subpath: ""
+      subpath: "",
     };
   }
 
@@ -242,18 +242,18 @@ export function parseSource(rawSource: string): ParsedSource {
       owner: shorthandMatch[1],
       repo: shorthandMatch[2],
       ref: "",
-      subpath: ""
+      subpath: "",
     };
   }
 
   throw new Error(
-    `Unsupported source "${rawSource}". Use a local path, GitHub owner/repo shorthand, or a GitHub URL.`
+    `Unsupported source "${rawSource}". Use a local path, GitHub owner/repo shorthand, or a GitHub URL.`,
   );
 }
 
 async function fetchJson<T>(url: string, fetchImpl: FetchImpl = fetch): Promise<T> {
   const response = await fetchImpl(url, {
-    headers: githubRequestHeaders()
+    headers: githubRequestHeaders(),
   });
 
   if (!response.ok) {
@@ -266,7 +266,7 @@ async function fetchJson<T>(url: string, fetchImpl: FetchImpl = fetch): Promise<
 
 async function fetchText(url: string, fetchImpl: FetchImpl = fetch): Promise<string> {
   const response = await fetchImpl(url, {
-    headers: githubRequestHeaders()
+    headers: githubRequestHeaders(),
   });
 
   if (!response.ok) {
@@ -287,7 +287,7 @@ function encodeGitHubPath(targetPath: string): string {
 
 async function resolveGitHubRef(
   parsedSource: GitHubSource,
-  fetchImpl: FetchImpl = fetch
+  fetchImpl: FetchImpl = fetch,
 ): Promise<string> {
   if (parsedSource.ref) {
     return parsedSource.ref;
@@ -295,7 +295,7 @@ async function resolveGitHubRef(
 
   const repoInfo = await fetchJson<GitHubRepoInfo>(
     `https://api.github.com/repos/${parsedSource.owner}/${parsedSource.repo}`,
-    fetchImpl
+    fetchImpl,
   );
   return repoInfo.default_branch;
 }
@@ -304,12 +304,12 @@ async function fetchGitHubDirectoryEntries(
   parsedSource: GitHubSource,
   directoryPath: string,
   ref: string,
-  fetchImpl: FetchImpl = fetch
+  fetchImpl: FetchImpl = fetch,
 ): Promise<GitHubContentEntry[]> {
   const encodedPath = encodeGitHubPath(directoryPath);
   const pathSuffix = encodedPath ? `/${encodedPath}` : "";
   const url = `https://api.github.com/repos/${parsedSource.owner}/${parsedSource.repo}/contents${pathSuffix}?ref=${encodeURIComponent(
-    ref
+    ref,
   )}`;
 
   const payload = await fetchJson<GitHubContentEntry | GitHubContentEntry[]>(url, fetchImpl);
@@ -348,7 +348,7 @@ export function extractPromptMetadata(markdown: string): {
 
   return {
     metadata: parseCommentMetadata(match[1]),
-    body: match[2]
+    body: match[2],
   };
 }
 
@@ -453,7 +453,7 @@ export function buildSkillDocument(skill: SkillDocument): string {
     `    owner: ${yamlString(skill.source.owner)}`,
     `    repo: ${yamlString(skill.source.repo)}`,
     `    ref: ${yamlString(skill.source.ref)}`,
-    `    path: ${yamlString(skill.source.path)}`
+    `    path: ${yamlString(skill.source.path)}`,
   ];
 
   if (skill.variables.length > 0) {
@@ -471,13 +471,13 @@ export function buildSkillDocument(skill: SkillDocument): string {
 
 export async function resolveLocalSourceDir(
   rootPath: string,
-  selection: Selection = DEFAULT_SELECTION
+  selection: Selection = DEFAULT_SELECTION,
 ): Promise<string> {
   const resolvedRoot = path.resolve(rootPath);
   const directEntries = await readdir(resolvedRoot, { withFileTypes: true });
   const systemPromptsPath = path.join(resolvedRoot, "system-prompts");
   const hasMatchingMarkdownAtRoot = directEntries.some(
-    (entry) => entry.isFile() && matchesSelection(entry.name, selection)
+    (entry) => entry.isFile() && matchesSelection(entry.name, selection),
   );
 
   if (!hasMatchingMarkdownAtRoot && (await pathExists(systemPromptsPath))) {
@@ -489,7 +489,7 @@ export async function resolveLocalSourceDir(
 
 async function readLocalPromptFiles(
   parsedSource: LocalSource,
-  selection: Selection
+  selection: Selection,
 ): Promise<SourceInfo> {
   const sourceDir = await resolveLocalSourceDir(parsedSource.rootPath, selection);
   const entries = await readdir(sourceDir, { withFileTypes: true });
@@ -507,7 +507,7 @@ async function readLocalPromptFiles(
       filename: entry.name,
       relativePath,
       content: await readFile(filePath, "utf8"),
-      sourceUrl: `local:${relativePath}`
+      sourceUrl: `local:${relativePath}`,
     });
   }
 
@@ -515,14 +515,14 @@ async function readLocalPromptFiles(
     owner: "local",
     repo: path.basename(parsedSource.rootPath),
     ref: "local",
-    promptFiles
+    promptFiles,
   };
 }
 
 async function readGitHubPromptFiles(
   parsedSource: GitHubSource,
   selection: Selection,
-  fetchImpl: FetchImpl = fetch
+  fetchImpl: FetchImpl = fetch,
 ): Promise<SourceInfo> {
   const ref = await resolveGitHubRef(parsedSource, fetchImpl);
   let directoryPath = parsedSource.subpath;
@@ -530,14 +530,14 @@ async function readGitHubPromptFiles(
   if (!directoryPath) {
     const rootEntries = await fetchGitHubDirectoryEntries(parsedSource, "", ref, fetchImpl);
     const systemPromptsDir = rootEntries.find(
-      (entry) => entry.type === "dir" && entry.name === "system-prompts"
+      (entry) => entry.type === "dir" && entry.name === "system-prompts",
     );
     directoryPath = systemPromptsDir ? "system-prompts" : "";
   }
 
   const entries = await fetchGitHubDirectoryEntries(parsedSource, directoryPath, ref, fetchImpl);
   const markdownEntries = entries.filter(
-    (entry) => entry.type === "file" && matchesSelection(entry.name, selection)
+    (entry) => entry.type === "file" && matchesSelection(entry.name, selection),
   );
 
   const promptFiles = await Promise.all(
@@ -550,23 +550,23 @@ async function readGitHubPromptFiles(
         filename: entry.name,
         relativePath: entry.path,
         content: await fetchText(entry.download_url, fetchImpl),
-        sourceUrl: `https://github.com/${parsedSource.owner}/${parsedSource.repo}/blob/${ref}/${entry.path}`
+        sourceUrl: `https://github.com/${parsedSource.owner}/${parsedSource.repo}/blob/${ref}/${entry.path}`,
       };
-    })
+    }),
   );
 
   return {
     owner: parsedSource.owner,
     repo: parsedSource.repo,
     ref,
-    promptFiles
+    promptFiles,
   };
 }
 
 export async function collectPromptFiles(
   rawSource: string,
   selection: Selection,
-  fetchImpl: FetchImpl = fetch
+  fetchImpl: FetchImpl = fetch,
 ): Promise<SourceInfo> {
   const parsedSource = parseSource(rawSource);
 
@@ -598,8 +598,8 @@ export function normalizePromptToSkill(prompt: PromptFile, sourceInfo: SourceInf
       owner: sourceInfo.owner,
       repo: sourceInfo.repo,
       ref: sourceInfo.ref,
-      path: prompt.relativePath
-    }
+      path: prompt.relativePath,
+    },
   };
 }
 
@@ -607,7 +607,7 @@ async function loadManifest(outputDir: string): Promise<SyncManifest> {
   const manifestPath = path.join(outputDir, MANIFEST_FILENAME);
   if (!(await pathExists(manifestPath))) {
     return {
-      skills: []
+      skills: [],
     };
   }
 
@@ -627,7 +627,7 @@ export async function syncSkills({
   outputDir = DEFAULT_OUTPUT_DIR,
   selection = DEFAULT_SELECTION,
   dryRun = false,
-  fetchImpl = fetch
+  fetchImpl = fetch,
 }: SyncOptions = {}): Promise<SyncResult> {
   const resolvedOutputDir = path.resolve(outputDir);
   const sourceInfo = await collectPromptFiles(source, selection, fetchImpl);
@@ -643,7 +643,7 @@ export async function syncSkills({
     return {
       wrote: false,
       outputDir: resolvedOutputDir,
-      skills: normalizedSkills.map((skill) => skill.slug)
+      skills: normalizedSkills.map((skill) => skill.slug),
     };
   }
 
@@ -670,8 +670,8 @@ export async function syncSkills({
       throw new Error(
         `Refusing to overwrite existing non-generated directory: ${path.relative(
           process.cwd(),
-          skillDir
-        )}`
+          skillDir,
+        )}`,
       );
     }
 
@@ -682,13 +682,13 @@ export async function syncSkills({
   await writeManifest(resolvedOutputDir, {
     source,
     selection,
-    skills: normalizedSkills.map((skill) => skill.slug)
+    skills: normalizedSkills.map((skill) => skill.slug),
   });
 
   return {
     wrote: true,
     outputDir: resolvedOutputDir,
-    skills: normalizedSkills.map((skill) => skill.slug)
+    skills: normalizedSkills.map((skill) => skill.slug),
   };
 }
 

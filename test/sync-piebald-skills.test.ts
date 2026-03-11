@@ -12,7 +12,7 @@ import {
   parseArgs,
   parseSource,
   promptFileToSkillSlug,
-  resolveLocalSourceDir
+  resolveLocalSourceDir,
 } from "../src/sync-piebald-skills.ts";
 
 test("parseArgs supports source, selection, output dir, and dry-run", () => {
@@ -22,20 +22,20 @@ test("parseArgs supports source, selection, output dir, and dry-run", () => {
     "skill-related",
     "--output-dir",
     "tmp-skills",
-    "--dry-run"
+    "--dry-run",
   ]);
 
   assert.deepEqual(parsed, {
     source: "Piebald-AI/claude-code-system-prompts",
     outputDir: "tmp-skills",
     selection: "skill-related",
-    dryRun: true
+    dryRun: true,
   });
 });
 
 test("parseSource handles GitHub tree URLs", () => {
   const parsed = parseSource(
-    "https://github.com/Piebald-AI/claude-code-system-prompts/tree/main/system-prompts"
+    "https://github.com/Piebald-AI/claude-code-system-prompts/tree/main/system-prompts",
   );
 
   assert.deepEqual(parsed, {
@@ -43,7 +43,7 @@ test("parseSource handles GitHub tree URLs", () => {
     owner: "Piebald-AI",
     repo: "claude-code-system-prompts",
     ref: "main",
-    subpath: "system-prompts"
+    subpath: "system-prompts",
   });
 });
 
@@ -55,8 +55,14 @@ test("parseSource handles local paths", () => {
 
 test("matchesSelection differentiates builtin and related skill prompts", () => {
   assert.equal(matchesSelection("skill-debugging.md", "builtin-skills"), true);
-  assert.equal(matchesSelection("system-prompt-skillify-current-session.md", "builtin-skills"), false);
-  assert.equal(matchesSelection("system-prompt-skillify-current-session.md", "skill-related"), true);
+  assert.equal(
+    matchesSelection("system-prompt-skillify-current-session.md", "builtin-skills"),
+    false,
+  );
+  assert.equal(
+    matchesSelection("system-prompt-skillify-current-session.md", "skill-related"),
+    true,
+  );
   assert.equal(matchesSelection("README.md", "skill-related"), false);
 });
 
@@ -82,7 +88,7 @@ Use the logs.`;
     name: "Skill: Debugging",
     description: "Instructions for debugging an issue",
     ccVersion: "2.1.71",
-    variables: ["DEBUG_LOG_PATH"]
+    variables: ["DEBUG_LOG_PATH"],
   });
   assert.equal(extracted.body, "# Debug Skill\nUse the logs.");
 });
@@ -100,13 +106,14 @@ ccVersion: 2.1.71
 variables:
   - DEBUG_LOG_PATH
 -->
-# Debug Skill`
+# Debug Skill`,
     },
     {
       owner: "Piebald-AI",
       repo: "claude-code-system-prompts",
-      ref: "main"
-    }
+      ref: "main",
+      promptFiles: [],
+    },
   );
 
   assert.equal(normalized.slug, "debugging");
@@ -126,13 +133,16 @@ test("buildSkillDocument renders frontmatter that npx skills add can consume", (
       owner: "Piebald-AI",
       repo: "claude-code-system-prompts",
       ref: "main",
-      path: "system-prompts/skill-debugging.md"
+      path: "system-prompts/skill-debugging.md",
     },
     variables: ["DEBUG_LOG_PATH"],
-    body: "# Debug Skill\nUse the logs."
+    body: "# Debug Skill\nUse the logs.",
   });
 
-  assert.match(document, /^---\nname: "debugging"\ndescription: "Instructions for debugging an issue"/);
+  assert.match(
+    document,
+    /^---\nname: "debugging"\ndescription: "Instructions for debugging an issue"/,
+  );
   assert.match(document, /metadata:\n  originalName: "Skill: Debugging"/);
   assert.match(document, /\n---\n\n# Debug Skill\nUse the logs\.$/);
 });
