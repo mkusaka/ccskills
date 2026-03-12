@@ -3,24 +3,24 @@
   extends: ["config:best-practices", "group:definitelyTyped"],
   packageRules: [
     {
-      description: "Group minor and patch updates for npm dependencies",
+      description: "Group minor, patch, and pin updates for npm dependencies",
       groupName: "npm dependencies (non-major)",
       automerge: true,
       automergeType: "pr",
       minimumReleaseAge: "7 days",
       matchManagers: ["npm"],
       matchDepTypes: ["dependencies"],
-      matchUpdateTypes: ["minor", "patch"],
+      matchUpdateTypes: ["minor", "patch", "pin"],
     },
     {
-      description: "Group minor and patch updates for npm devDependencies",
+      description: "Group minor, patch, and pin updates for npm devDependencies",
       groupName: "npm devDependencies (non-major)",
       automerge: true,
       automergeType: "pr",
       minimumReleaseAge: "7 days",
       matchManagers: ["npm"],
       matchDepTypes: ["devDependencies"],
-      matchUpdateTypes: ["minor", "patch"],
+      matchUpdateTypes: ["minor", "patch", "pin"],
     },
     {
       description: "Group minor, patch, digest, and pinDigest updates for GitHub Actions",
