@@ -8,6 +8,7 @@
     "debugging",
     "loop-slash-command",
     "simplify",
+    "stuck",
     "update-claude-code-config",
     "verification-specialist"
   ]

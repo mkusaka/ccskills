@@ -3,7 +3,7 @@ name: "build-with-claude-api"
 description: "Main routing guide for building LLM-powered applications with Claude, including language detection, surface selection, and architecture overview"
 metadata:
   originalName: "Skill: Build with Claude API"
-  ccVersion: "2.1.63"
+  ccVersion: "2.1.73"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-build-with-claude-api.md"
   source:
     owner: "Piebald-AI"
@@ -168,7 +168,7 @@ A note: if any of the model strings above look unfamiliar to you, that's to be e
 
 ## Compaction (Quick Reference)
 
-**Beta, Opus 4.6 only.** For long-running conversations that may exceed the 200K context window, enable server-side compaction. The API automatically summarizes earlier context when it approaches the trigger threshold (default: 150K tokens). Requires beta header \`compact-2026-01-12\`.
+**Beta, Opus 4.6 and Sonnet 4.6.** For long-running conversations that may exceed the 200K context window, enable server-side compaction. The API automatically summarizes earlier context when it approaches the trigger threshold (default: 150K tokens). Requires beta header \`compact-2026-01-12\`.
 
 **Critical:** Append \`response.content\` (not just the text) back to your messages on every turn. Compaction blocks in the response must be preserved — the API uses them to replace the compacted history on the next request. Extracting only the text string and appending that will silently lose the compaction state.
 
