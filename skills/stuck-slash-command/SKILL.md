@@ -1,15 +1,15 @@
 ---
-name: "stuck"
+name: "stuck-slash-command"
 description: "Diagnozse frozen or slow Claude Code sessions"
 metadata:
-  originalName: "Skill: /stuck"
+  originalName: "Skill: /stuck slash command"
   ccVersion: "2.1.74"
-  sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-stuck.md"
+  sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-stuck-slash-command.md"
   source:
     owner: "Piebald-AI"
     repo: "claude-code-system-prompts"
     ref: "main"
-    path: "system-prompts/skill-stuck.md"
+    path: "system-prompts/skill-stuck-slash-command.md"
 ---
 
 # /stuck — diagnose frozen/slow Claude Code sessions
