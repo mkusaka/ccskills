@@ -3,7 +3,7 @@ name: "update-claude-code-config"
 description: "Skill for modifying Claude Code configuration file (settings.json)."
 metadata:
   originalName: "Skill: Update Claude Code Config"
-  ccVersion: "2.1.9"
+  ccVersion: "2.1.76"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-update-claude-code-config.md"
   source:
     owner: "Piebald-AI"
@@ -29,7 +29,7 @@ If the user wants something to happen automatically in response to an EVENT, the
 - "When I run bash commands, log them" → PreToolUse hook with Bash matcher
 - "Always run tests after code changes" → PostToolUse hook
 
-**Hook events:** PreToolUse, PostToolUse, PreCompact, Stop, Notification, SessionStart
+**Hook events:** PreToolUse, PostToolUse, PreCompact, PostCompact, Stop, Notification, SessionStart
 
 ## CRITICAL: Read Before Write
 
