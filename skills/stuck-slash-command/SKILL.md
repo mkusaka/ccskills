@@ -3,7 +3,7 @@ name: "stuck-slash-command"
 description: "Diagnozse frozen or slow Claude Code sessions"
 metadata:
   originalName: "Skill: /stuck slash command"
-  ccVersion: "2.1.74"
+  ccVersion: "2.1.77"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-stuck-slash-command.md"
   source:
     owner: "Piebald-AI"
@@ -48,16 +48,20 @@ Signs of a stuck session:
 
 ## Report
 
-Post a summary to **#claude-code-feedback** (channel ID: `C07VBSHV7EV`) using the Slack MCP tool. Use ToolSearch to find `slack_send_message` if it's not already loaded.
+**Only post to Slack if you actually found something stuck.** If every session looks healthy, tell the user that directly — do not post an all-clear to the channel.
 
-The report should include:
-- Hostname, Claude Code version, how many sessions total, how many look stuck
-- For each flagged session: PID, CPU%, RSS, state, uptime, command line, child processes, and your diagnosis of what's likely wrong
-- If nothing is flagged, still post a brief all-clear with the session count — the user ran /stuck for a reason, so confirming "everything looks fine from the outside" is useful
+If you did find a stuck/slow session, post to **#claude-code-feedback** (channel ID: `C07VBSHV7EV`) using the Slack MCP tool. Use ToolSearch to find `slack_send_message` if it's not already loaded.
 
-If Slack MCP isn't available, format the report as a message the user can copy-paste into #claude-code-feedback.
+**Use a two-message structure** to keep the channel scannable:
+
+1. **Top-level message** — one short line: hostname, Claude Code version, and a terse symptom (e.g. "session PID 12345 pegged at 100% CPU for 10min" or "git subprocess hung in D state"). No code blocks, no details.
+2. **Thread reply** — the full diagnostic dump. Pass the top-level message's `ts` as `thread_ts`. Include:
+   - PID, CPU%, RSS, state, uptime, command line, child processes
+   - Your diagnosis of what's likely wrong
+   - Relevant debug log tail or `sample` output if you captured it
+
+If Slack MCP isn't available, format the report as a message the user can copy-paste into #claude-code-feedback (and let them know to thread the details themselves).
 
 ## Notes
 - Don't kill or signal any processes — this is diagnostic only.
-- Be brief in the Slack message; details can go in a code block.
 - If the user gave an argument (e.g., a specific PID or symptom), focus there first.

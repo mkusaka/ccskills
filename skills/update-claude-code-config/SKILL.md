@@ -3,7 +3,7 @@ name: "update-claude-code-config"
 description: "Skill for modifying Claude Code configuration file (settings.json)."
 metadata:
   originalName: "Skill: Update Claude Code Config"
-  ccVersion: "2.1.76"
+  ccVersion: "2.1.77"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-update-claude-code-config.md"
   source:
     owner: "Piebald-AI"
@@ -13,6 +13,7 @@ metadata:
   variables:
     - "SETTINGS_FILE_LOCATION_PROMPT"
     - "HOOKS_CONFIGURATION_PROMPT"
+    - "CONSTRUCTING_HOOK_PROMPT"
 ---
 
 # Update Config Skill
@@ -90,6 +91,8 @@ ${SETTINGS_FILE_LOCATION_PROMPT}
 
 ${HOOKS_CONFIGURATION_PROMPT}
 
+${CONSTRUCTING_HOOK_PROMPT}
+
 ## Example Workflows
 
 ### Adding a Hook
@@ -107,7 +110,7 @@ User: "Format my code after Claude writes it"
       "matcher": "Write|Edit",
       "hooks": [{
         "type": "command",
-        "command": "jq -r '.tool_response.filePath // .tool_input.file_path' | xargs prettier --write 2>/dev/null || true"
+        "command": "jq -r '.tool_response.filePath // .tool_input.file_path' | { read -r f; prettier --write \\"$f\\"; } 2>/dev/null || true"
       }]
     }]
   }

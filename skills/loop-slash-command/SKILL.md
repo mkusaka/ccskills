@@ -3,7 +3,7 @@ name: "loop-slash-command"
 description: "Parses user input into an interval and prompt, converts the interval to a cron expression, and schedules a recurring task"
 metadata:
   originalName: "Skill: /loop slash command"
-  ccVersion: "2.1.71"
+  ccVersion: "2.1.79"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-loop-slash-command.md"
   source:
     owner: "Piebald-AI"
@@ -13,7 +13,8 @@ metadata:
   variables:
     - "CRON_CREATE_TOOL_NAME"
     - "DEFAULT_INTERVAL"
-    - "CRON_CANCEL_TOOL_NAME"
+    - "CANCEL_TIMEFRAME_DAYS"
+    - "CRON_DELETE_TOOL_NAME"
     - "USER_INPUT"
 ---
 
@@ -53,12 +54,12 @@ Supported suffixes: \`s\` (seconds, rounded up to nearest minute, min 1), \`m\` 
 
 ## Action
 
-Call ${CRON_CREATE_TOOL_NAME} with:
-- \`cron\`: the expression from the table above
-- \`prompt\`: the parsed prompt from above, verbatim (slash commands are passed through unchanged)
-- \`recurring\`: \`true\`
-
-Then confirm to the user: what's scheduled, the cron expression, the human-readable cadence, that recurring tasks auto-expire after 3 days, and that they can cancel sooner with ${CRON_CANCEL_TOOL_NAME} (include the job ID).
+1. Call ${CRON_CREATE_TOOL_NAME} with:
+   - \`cron\`: the expression from the table above
+   - \`prompt\`: the parsed prompt from above, verbatim (slash commands are passed through unchanged)
+   - \`recurring\`: \`true\`
+2. Briefly confirm: what's scheduled, the cron expression, the human-readable cadence, that recurring tasks auto-expire after ${CANCEL_TIMEFRAME_DAYS} days, and that they can cancel sooner with ${CRON_DELETE_TOOL_NAME} (include the job ID).
+3. **Then immediately execute the parsed prompt now** — don't wait for the first cron fire. If it's a slash command, invoke it via the Skill tool; otherwise act on it directly.
 
 ## Input
 

@@ -3,7 +3,7 @@ name: "build-with-claude-api"
 description: "Main routing guide for building LLM-powered applications with Claude, including language detection, surface selection, and architecture overview"
 metadata:
   originalName: "Skill: Build with Claude API"
-  ccVersion: "2.1.73"
+  ccVersion: "2.1.79"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-build-with-claude-api.md"
   source:
     owner: "Piebald-AI"
@@ -134,7 +134,7 @@ Everything goes through \`POST /v1/messages\`. Tools and output constraints are 
 
 **Structured outputs** — Constrains the Messages API response format (\`output_config.format\`) and/or tool parameter validation (\`strict: true\`). The recommended approach is \`client.messages.parse()\` which validates responses against your schema automatically. Note: the old \`output_format\` parameter is deprecated; use \`output_config: {format: {...}}\` on \`messages.create()\`.
 
-**Supporting endpoints** — Batches (\`POST /v1/messages/batches\`), Files (\`POST /v1/files\`), and Token Counting feed into or support Messages API requests.
+**Supporting endpoints** — Batches (\`POST /v1/messages/batches\`), Files (\`POST /v1/files\`), Token Counting, and Models (\`GET /v1/models\`, \`GET /v1/models/{id}\` — live capability/context-window discovery) feed into or support Messages API requests.
 
 ---
 
@@ -151,6 +151,8 @@ Everything goes through \`POST /v1/messages\`. Tools and output constraints are 
 **CRITICAL: Use only the exact model ID strings from the table above — they are complete as-is. Do not append date suffixes.** For example, use \`claude-sonnet-4-5\`, never \`claude-sonnet-4-5-20250514\` or any other date-suffixed variant you might recall from training data. If the user requests an older model not in the table (e.g., "opus 4.5", "sonnet 3.7"), read \`shared/models.md\` for the exact ID — do not construct one yourself.
 
 A note: if any of the model strings above look unfamiliar to you, that's to be expected — that just means they were released after your training data cutoff. Rest assured they are real models; we wouldn't mess with you like that.
+
+**Live capability lookup:** The table above is cached. When the user asks "what's the context window for X", "does X support vision/thinking/effort", or "which models support Y", query the Models API (\`client.models.retrieve(id)\` / \`client.models.list()\`) — see \`shared/models.md\` for the field reference and capability-filter examples.
 
 ---
 
@@ -243,7 +245,8 @@ Live documentation URLs are in \`shared/live-sources.md\`.
 - Don't truncate inputs when passing files or content to the API. If the content is too long to fit in the context window, notify the user and discuss options (chunking, summarization, etc.) rather than silently truncating.
 - **Opus 4.6 / Sonnet 4.6 thinking:** Use \`thinking: {type: "adaptive"}\` — do NOT use \`budget_tokens\` (deprecated on both Opus 4.6 and Sonnet 4.6). For older models, \`budget_tokens\` must be less than \`max_tokens\` (minimum 1024). This will throw an error if you get it wrong.
 - **Opus 4.6 prefill removed:** Assistant message prefills (last-assistant-turn prefills) return a 400 error on Opus 4.6. Use structured outputs (\`output_config.format\`) or system prompt instructions to control response format instead.
-- **128K output tokens:** Opus 4.6 supports up to 128K \`max_tokens\`, but the SDKs require streaming for large \`max_tokens\` to avoid HTTP timeouts. Use \`.stream()\` with \`.get_final_message()\` / \`.finalMessage()\`.
+- **\`max_tokens\` defaults:** Don't lowball \`max_tokens\` — hitting the cap truncates output mid-thought and requires a retry. For non-streaming requests, default to \`~16000\` (keeps responses under SDK HTTP timeouts). For streaming requests, default to \`~64000\` (timeouts aren't a concern, so give the model room). Only go lower when you have a hard reason: classification (\`~256\`), cost caps, or deliberately short outputs.
+- **128K output tokens:** Opus 4.6 supports up to 128K \`max_tokens\`, but the SDKs require streaming for values that large to avoid HTTP timeouts. Use \`.stream()\` with \`.get_final_message()\` / \`.finalMessage()\`.
 - **Tool call JSON parsing (Opus 4.6):** Opus 4.6 may produce different JSON string escaping in tool call \`input\` fields (e.g., Unicode or forward-slash escaping). Always parse tool inputs with \`json.loads()\` / \`JSON.parse()\` — never do raw string matching on the serialized input.
 - **Structured outputs (all models):** Use \`output_config: {format: {...}}\` instead of the deprecated \`output_format\` parameter on \`messages.create()\`. This is a general API change, not 4.6-specific.
 - **Don't reimplement SDK functionality:** The SDK provides high-level helpers — use them instead of building from scratch. Specifically: use \`stream.finalMessage()\` instead of wrapping \`.on()\` events in \`new Promise()\`; use typed exception classes (\`Anthropic.RateLimitError\`, etc.) instead of string-matching error messages; use SDK types (\`Anthropic.MessageParam\`, \`Anthropic.Tool\`, \`Anthropic.Message\`, etc.) instead of redefining equivalent interfaces.
