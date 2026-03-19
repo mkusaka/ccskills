@@ -6,10 +6,12 @@
     "build-with-claude-api-reference-guide",
     "create-verifier-skills",
     "debugging",
+    "init-claudemd-and-skill-setup-new-version",
     "loop-slash-command",
     "simplify",
     "stuck-slash-command",
     "update-claude-code-config",
+    "update-config-7-step-verification-flow",
     "verification-specialist"
   ]
 }
