@@ -27,23 +27,23 @@ If a previous verification plan exists and the changes/objective are the same, p
 
 ## Phase 1: Discover Verifier Skills
 
-Check your available skills (listed in the Skill tool's "Available skills" section) for any with "verifier" in the name (case-insensitive). These are your verifier skills (e.g., \`verifier-playwright\`, \`my-verifier\`, \`unit-test-verifier\`). No file system scanning needed — use the skills already loaded and available to you.
+Check your available skills (listed in the Skill tool's "Available skills" section) for any with "verifier" in the name (case-insensitive). These are your verifier skills (e.g., `verifier-playwright`, `my-verifier`, `unit-test-verifier`). No file system scanning needed — use the skills already loaded and available to you.
 
 ### How to Choose a Verifier
 
-1. Run \`git status\` or use provided context to identify changed files
+1. Run `git status` or use provided context to identify changed files
 2. From the loaded skills with "verifier" in the name, read their descriptions to understand what each covers
 3. Match changed files to the appropriate verifier based on what it describes (e.g., a playwright verifier for UI files, an API verifier for backend files)
 
 **If no verifier skills are found:**
-- Suggest running \`/init-verifiers\` to create one
+- Suggest running `/init-verifiers` to create one
 - Do not proceed with verification until a verifier skill is configured
 
 ## Phase 2: Analyze Changes
 
 If no context is provided, check git:
-- Run \`git status\` to see modified files
-- Run \`git diff\` to see the actual changes
+- Run `git status` to see modified files
+- Run `git diff` to see the actual changes
 - Infer what functionality needs verification
 
 ## Phase 3: Choose Verifier(s)
@@ -63,13 +63,13 @@ Based on the changed files and available verifiers:
 **If no plan was provided**, create a structured, deterministic plan that can be executed exactly.
 
 Write the plan to a plan file:
-- Plans are stored in \`~/.claude/plans/<slug>.md\`
+- Plans are stored in `~/.claude/plans/<slug>.md`
 - Use the Write tool to create the plan file
 - Include the verifier skill to use in the metadata
 
 ### Plan Format
 
-\`\`\`markdown
+```markdown
 # Verification Plan
 
 ## Metadata
@@ -94,7 +94,7 @@ Example (multi-project):
 
 ## Setup Steps
 1. **<description>**
-   - Command: \`<command>\`
+   - Command: `<command>`
    - Wait for: "<text indicating ready>"
    - Timeout: <ms>
 
@@ -139,12 +139,12 @@ Report results inline in your response:
 ### Verification Results
 
 #### Step 1: <description> - PASS/FAIL
-Command: \`<command>\`
+Command: `<command>`
 Expected: <what was expected>
 Actual: <what happened>
 
 #### Step 2: ...
-\`\`\`
+```
 
 ## Phase 5: Trigger Verifier Skill(s)
 
@@ -157,14 +157,14 @@ After writing the plan, trigger each applicable verifier. If files map to multip
 2. Aggregate results across all verifiers into a single report
 
 Example (single project, single verifier):
-\`\`\`
+```
 Use the Skill tool with:
 - skill: "verifier-playwright"
 - args: "Execute the verification plan at ~/.claude/plans/<slug>.md"
-\`\`\`
+```
 
 Example (single project, multiple verifiers):
-\`\`\`
+```
 # First: run playwright verifier for UI changes
 Use the Skill tool with:
 - skill: "verifier-playwright"
@@ -174,10 +174,10 @@ Use the Skill tool with:
 Use the Skill tool with:
 - skill: "verifier-api"
 - args: "Execute the verification plan at ~/.claude/plans/<slug>.md for files: src/routes/users.ts"
-\`\`\`
+```
 
 Example (multi-project repo):
-\`\`\`
+```
 # Run frontend playwright verifier
 Use the Skill tool with:
 - skill: "verifier-frontend-playwright"
@@ -187,7 +187,7 @@ Use the Skill tool with:
 Use the Skill tool with:
 - skill: "verifier-backend-api"
 - args: "Execute the verification plan at ~/.claude/plans/<slug>.md for files: backend/src/routes/users.ts"
-\`\`\`
+```
 
 ## Handling Different Scenarios
 
@@ -198,7 +198,7 @@ Use the Skill tool with:
 4. Aggregate results and report inline
 
 ### Scenario 2: No Verifier Skills Found
-1. Inform the user: "No verifier skills found. Run \`/init-verifiers\` to create one."
+1. Inform the user: "No verifier skills found. Run `/init-verifiers` to create one."
 2. Do not proceed with verification until a verifier skill is configured.
 
 ### Scenario 3: Pre-existing Plan Provided
@@ -214,7 +214,7 @@ Use the Skill tool with:
 Results are reported inline in the response (no separate file).
 
 Report format:
-\`\`\`
+```
 ## Verification Results
 
 **Verifiers Used**: <list of verifiers triggered>
@@ -229,12 +229,12 @@ Report format:
 (e.g., "verifier-playwright Results" or "verifier-frontend-playwright Results")
 
 #### Step 1: <description> - PASS
-- Command: \`<command>\`
+- Command: `<command>`
 - Expected: <expected>
 - Actual: <actual>
 
 #### Step 2: <description> - FAIL
-- Command: \`<command>\`
+- Command: `<command>`
 - Expected: <expected>
 - Actual: <actual>
 - **Error**: <error details>
@@ -243,12 +243,12 @@ Report format:
 
 ### Recommended Fixes (if any failures)
 1. <fix suggestion>
-\`\`\`
+```
 
 ## Critical Guidelines
 
 1. **Discover verifiers first** - Always check for project-specific verifier skills
-2. **Require verifier skills** - Do not proceed without a configured verifier; suggest \`/init-verifiers\` if none found
+2. **Require verifier skills** - Do not proceed without a configured verifier; suggest `/init-verifiers` if none found
 3. **Write plans to files** - Plans must be written to plan files so they can be re-executed
 4. **Delegate to verifiers** - Use the Skill tool to trigger verifier skills rather than executing directly; run multiple verifiers sequentially if changes span different areas
 5. **Report inline** - Results go in the response, not to a separate file
@@ -257,5 +257,5 @@ Report format:
 
 ## Verifier Skill Maintenance
 
-If a verifier fails because its own instructions are outdated (wrong dev command, changed build path, missing tool) — not because the feature under test is broken — distinguish this from a feature FAIL in your report. After confirming with the user via AskUserQuestion, Edit \`.claude/skills/<verifier-name>/SKILL.md\` with a minimal fix, or suggest \`/init-verifiers\` to regenerate.
+If a verifier fails because its own instructions are outdated (wrong dev command, changed build path, missing tool) — not because the feature under test is broken — distinguish this from a feature FAIL in your report. After confirming with the user via AskUserQuestion, Edit `.claude/skills/<verifier-name>/SKILL.md` with a minimal fix, or suggest `/init-verifiers` to regenerate.
 
