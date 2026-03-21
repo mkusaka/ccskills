@@ -76,10 +76,10 @@ Based on what was detected in Phase 1, help the user set up appropriate verifica
      - **None** - Skip browser automation (will use basic HTTP checks only)
 
 3. **If user chooses to install Playwright**, run the appropriate command based on package manager:
-   - For npm: \`npm install -D @playwright/test && npx playwright install\`
-   - For yarn: \`yarn add -D @playwright/test && yarn playwright install\`
-   - For pnpm: \`pnpm add -D @playwright/test && pnpm exec playwright install\`
-   - For bun: \`bun add -D @playwright/test && bun playwright install\`
+   - For npm: `npm install -D @playwright/test && npx playwright install`
+   - For yarn: `yarn add -D @playwright/test && yarn playwright install`
+   - For pnpm: `pnpm add -D @playwright/test && pnpm exec playwright install`
+   - For bun: `bun add -D @playwright/test && bun playwright install`
 
 4. **If user chooses Chrome DevTools MCP or Claude Chrome Extension**:
    - These require MCP server configuration rather than package installation
@@ -92,7 +92,7 @@ Based on what was detected in Phase 1, help the user set up appropriate verifica
 
 ### For CLI Tools
 
-1. Check if asciinema is available (run \`which asciinema\`)
+1. Check if asciinema is available (run `which asciinema`)
 2. If not available, inform the user that asciinema can help record verification sessions but is optional
 3. Tmux is typically system-installed, just verify it's available
 
@@ -100,7 +100,7 @@ Based on what was detected in Phase 1, help the user set up appropriate verifica
 
 1. Check if HTTP testing tools are available:
    - curl (usually system-installed)
-   - httpie (\`http\` command)
+   - httpie (`http` command)
 2. No installation typically needed
 
 ## Phase 3: Interactive Q&A
@@ -114,12 +114,12 @@ Based on the areas detected in Phase 1, you may need to create multiple verifier
    - "verifier-cli" for CLI/terminal testing
    - "verifier-api" for HTTP API testing
 
-   If there are MULTIPLE project areas, use the format \`verifier-<project>-<type>\`:
+   If there are MULTIPLE project areas, use the format `verifier-<project>-<type>`:
    - "verifier-frontend-playwright" for the frontend web UI
    - "verifier-backend-api" for the backend API
    - "verifier-admin-playwright" for an admin dashboard
 
-   The \`<project>\` portion should be a short identifier for the subdirectory or project area (e.g., the folder name or package name).
+   The `<project>` portion should be a short identifier for the subdirectory or project area (e.g., the folder name or package name).
 
    Custom names are allowed but MUST include "verifier" in the name — the Verify agent discovers skills by looking for "verifier" in the folder name.
 
@@ -154,7 +154,7 @@ Based on the areas detected in Phase 1, you may need to create multiple verifier
    - **Test credentials**: What credentials should the verifier use?
      - Ask for the login URL (e.g., "/login", "http://localhost:3000/auth")
      - Ask for test username/email and password, or API key
-     - Note: Suggest the user use environment variables for secrets (e.g., \`TEST_USER\`, \`TEST_PASSWORD\`) rather than hardcoding
+     - Note: Suggest the user use environment variables for secrets (e.g., `TEST_USER`, `TEST_PASSWORD`) rather than hardcoding
    - **Post-login indicator**: How to confirm login succeeded?
      - URL redirect (e.g., redirects to "/dashboard")
      - Element appears (e.g., "Welcome" text, user avatar)
@@ -162,13 +162,13 @@ Based on the areas detected in Phase 1, you may need to create multiple verifier
 
 ## Phase 4: Generate Verifier Skill
 
-**All verifier skills are created in the project root's \`.claude/skills/\` directory.** This ensures they are automatically loaded when Claude runs in the project.
+**All verifier skills are created in the project root's `.claude/skills/` directory.** This ensures they are automatically loaded when Claude runs in the project.
 
-Write the skill file to \`.claude/skills/<verifier-name>/SKILL.md\`.
+Write the skill file to `.claude/skills/<verifier-name>/SKILL.md`.
 
 ### Skill Template Structure
 
-\`\`\`markdown
+```markdown
 ---
 name: <verifier-name>
 description: <description based on type>
@@ -205,12 +205,12 @@ After verification:
 ## Self-Update
 
 If verification fails because this skill's instructions are outdated (dev server command/port/ready-signal changed, etc.) — not because the feature under test is broken — or if the user corrects you mid-run, use AskUserQuestion to confirm and then Edit this SKILL.md with a minimal targeted fix.
-\`\`\`
+```
 
 ### Allowed Tools by Type
 
 **verifier-playwright**:
-\`\`\`yaml
+```yaml
 allowed-tools:
   - Bash(npm:*)
   - Bash(yarn:*)
@@ -220,20 +220,20 @@ allowed-tools:
   - Read
   - Glob
   - Grep
-\`\`\`
+```
 
 **verifier-cli**:
-\`\`\`yaml
+```yaml
 allowed-tools:
   - Tmux
   - Bash(asciinema:*)
   - Read
   - Glob
   - Grep
-\`\`\`
+```
 
 **verifier-api**:
-\`\`\`yaml
+```yaml
 allowed-tools:
   - Bash(curl:*)
   - Bash(http:*)
@@ -242,13 +242,13 @@ allowed-tools:
   - Read
   - Glob
   - Grep
-\`\`\`
+```
 
 
 ## Phase 5: Confirm Creation
 
 After writing the skill file(s), inform the user:
-1. Where each skill was created (always in \`.claude/skills/\`)
+1. Where each skill was created (always in `.claude/skills/`)
 2. How the Verify agent will discover them — the folder name must contain "verifier" (case-insensitive) for automatic discovery
 3. That they can edit the skills to customize them
 4. That they can run /init-verifiers again to add more verifiers for other areas
