@@ -12,6 +12,8 @@
     "stuck-slash-command",
     "update-claude-code-config",
     "update-config-7-step-verification-flow",
-    "verification-specialist"
+    "verify-cli-changes-example-for-verify-skill",
+    "verify-serverapi-changes-example-for-verify-skill",
+    "verify-skill"
   ]
 }

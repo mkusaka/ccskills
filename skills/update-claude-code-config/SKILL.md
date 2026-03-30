@@ -46,9 +46,9 @@ When the user's request is ambiguous, use AskUserQuestion to clarify:
 ## Decision: Config Tool vs Direct Edit
 
 **Use the Config tool** for these simple settings:
-- \`theme\`, \`editorMode\`, \`verbose\`, \`model\`
-- \`language\`, \`alwaysThinkingEnabled\`
-- \`permissions.defaultMode\`
+- `theme`, `editorMode`, `verbose`, `model`
+- `language`, `alwaysThinkingEnabled`
+- `permissions.defaultMode`
 
 **Edit settings.json directly** for:
 - Hooks (PreToolUse, PostToolUse, etc.)
@@ -70,12 +70,12 @@ When the user's request is ambiguous, use AskUserQuestion to clarify:
 When adding to permission arrays or hook arrays, **merge with existing**, don't replace:
 
 **WRONG** (replaces existing permissions):
-\`\`\`json
+```json
 { "permissions": { "allow": ["Bash(npm:*)"] } }
-\`\`\`
+```
 
 **RIGHT** (preserves existing + adds new):
-\`\`\`json
+```json
 {
   "permissions": {
     "allow": [
@@ -85,7 +85,7 @@ When adding to permission arrays or hook arrays, **merge with existing**, don't 
     ]
   }
 }
-\`\`\`
+```
 
 ${SETTINGS_FILE_LOCATION_PROMPT}
 
@@ -100,29 +100,29 @@ ${CONSTRUCTING_HOOK_PROMPT}
 User: "Format my code after Claude writes it"
 
 1. **Clarify**: Which formatter? (prettier, gofmt, etc.)
-2. **Read**: \`.claude/settings.json\` (or create if missing)
+2. **Read**: `.claude/settings.json` (or create if missing)
 3. **Merge**: Add to existing hooks, don't replace
 4. **Result**:
-\`\`\`json
+```json
 {
   "hooks": {
     "PostToolUse": [{
       "matcher": "Write|Edit",
       "hooks": [{
         "type": "command",
-        "command": "jq -r '.tool_response.filePath // .tool_input.file_path' | { read -r f; prettier --write \\"$f\\"; } 2>/dev/null || true"
+        "command": "jq -r '.tool_response.filePath // .tool_input.file_path' | { read -r f; prettier --write \"$f\"; } 2>/dev/null || true"
       }]
     }]
   }
 }
-\`\`\`
+```
 
 ### Adding Permissions
 
 User: "Allow npm commands without prompting"
 
 1. **Read**: Existing permissions
-2. **Merge**: Add \`Bash(npm:*)\` to allow array
+2. **Merge**: Add `Bash(npm:*)` to allow array
 3. **Result**: Combined with existing allows
 
 ### Environment Variables
@@ -132,9 +132,9 @@ User: "Set DEBUG=true"
 1. **Decide**: User settings (global) or project settings?
 2. **Read**: Target file
 3. **Merge**: Add to env object
-\`\`\`json
+```json
 { "env": { "DEBUG": "true" } }
-\`\`\`
+```
 
 ## Common Mistakes to Avoid
 
@@ -151,4 +151,4 @@ If a hook isn't running:
 3. **Check the matcher** - Does it match the tool name? (e.g., "Bash", "Write", "Edit")
 4. **Check hook type** - Is it "command", "prompt", or "agent"?
 5. **Test the command** - Run the hook command manually to see if it works
-6. **Use --debug** - Run \`claude --debug\` to see hook execution logs
+6. **Use --debug** - Run `claude --debug` to see hook execution logs
