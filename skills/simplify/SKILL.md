@@ -3,7 +3,7 @@ name: "simplify"
 description: "Instructions for simplifying code"
 metadata:
   originalName: "Skill: Simplify"
-  ccVersion: "2.1.72"
+  ccVersion: "2.1.81"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-simplify.md"
   source:
     owner: "Piebald-AI"
@@ -20,7 +20,7 @@ Review all changed files for reuse, quality, and efficiency. Fix any issues foun
 
 ## Phase 1: Identify Changes
 
-Run \`git diff\` (or \`git diff HEAD\` if there are staged changes) to see what changed. If there are no git changes, review the most recently modified files that the user mentioned or that you edited earlier in this conversation.
+Run `git diff` (or `git diff HEAD` if there are staged changes) to see what changed. If there are no git changes, review the most recently modified files that the user mentioned or that you edited earlier in this conversation.
 
 ## Phase 2: Launch Three Review Agents in Parallel
 
@@ -44,6 +44,7 @@ Review the same changes for hacky patterns:
 4. **Leaky abstractions**: exposing internal details that should be encapsulated, or breaking existing abstraction boundaries
 5. **Stringly-typed code**: using raw strings where constants, enums (string unions), or branded types already exist in the codebase
 6. **Unnecessary JSX nesting**: wrapper Boxes/elements that add no layout value — check if inner component props (flexShrink, alignItems, etc.) already provide the needed behavior
+7. **Unnecessary comments**: comments explaining WHAT the code does (well-named identifiers already do that), narrating the change, or referencing the task/caller — delete; keep only non-obvious WHY (hidden constraints, subtle invariants, workarounds)
 
 ### Agent 3: Efficiency Review
 
