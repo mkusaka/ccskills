@@ -70,25 +70,6 @@ jobs:
 
           echo "number=$pr_number" >> "$GITHUB_OUTPUT"
 
-      - name: Wait for sync PR checks
-        if: steps.sync_pr.outputs.number != ''
-        run: |
-          for attempt in {1..30}; do
-            check_count="$(
-              gh pr checks "${{ steps.sync_pr.outputs.number }}" --json name --jq 'length' || true
-            )"
-
-            if [[ "$check_count" != "0" && -n "$check_count" ]]; then
-              gh pr checks "${{ steps.sync_pr.outputs.number }}" --watch --fail-fast
-              exit 0
-            fi
-
-            sleep 10
-          done
-
-          echo "Timed out waiting for PR checks to be registered." >&2
-          exit 1
-
       - name: Merge sync PR
         if: steps.sync_pr.outputs.number != ''
         run: gh pr merge "${{ steps.sync_pr.outputs.number }}" --merge --delete-branch
