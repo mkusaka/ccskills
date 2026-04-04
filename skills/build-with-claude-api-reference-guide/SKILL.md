@@ -3,7 +3,7 @@ name: "build-with-claude-api-reference-guide"
 description: "Template for presenting language-specific reference documentation with quick task navigation"
 metadata:
   originalName: "Skill: Build with Claude API (reference guide)"
-  ccVersion: "2.1.83"
+  ccVersion: "2.1.91"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-build-with-claude-api-reference-guide.md"
   source:
     owner: "Piebald-AI"
@@ -38,6 +38,9 @@ The relevant documentation for your detected language is included below in `<doc
 
 **File uploads across multiple requests:**
 → Refer to `{lang}/claude-api/README.md` + `{lang}/claude-api/files-api.md`
+
+**Agent design (tool surface, context management, caching strategy):**
+→ Refer to `shared/agent-design.md`
 
 **Agent with built-in tools (file/web/terminal) (Python & TypeScript only):**
 → Refer to `{lang}/agent-sdk/README.md` + `{lang}/agent-sdk/patterns.md`

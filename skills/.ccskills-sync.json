@@ -2,6 +2,7 @@
   "source": "https://github.com/Piebald-AI/claude-code-system-prompts/tree/main/system-prompts",
   "selection": "builtin-skills",
   "skills": [
+    "agent-design-patterns",
     "build-with-claude-api",
     "build-with-claude-api-reference-guide",
     "computer-use-mcp",
