@@ -12,6 +12,7 @@
     "loop-slash-command",
     "simplify",
     "stuck-slash-command",
+    "team-onboarding-guide",
     "update-claude-code-config",
     "update-config-7-step-verification-flow",
     "verify-cli-changes-example-for-verify-skill",

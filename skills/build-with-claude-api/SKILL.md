@@ -3,7 +3,7 @@ name: "build-with-claude-api"
 description: "Main routing guide for building LLM-powered applications with Claude, including language detection, surface selection, and architecture overview"
 metadata:
   originalName: "Skill: Build with Claude API"
-  ccVersion: "2.1.91"
+  ccVersion: "2.1.94"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-build-with-claude-api.md"
   source:
     owner: "Piebald-AI"
@@ -21,6 +21,14 @@ This skill helps you build LLM-powered applications with Claude. Choose the righ
 Unless the user requests otherwise:
 
 For the Claude model version, please use {{OPUS_NAME}}, which you can access via the exact model string `{{OPUS_ID}}`. Please default to using adaptive thinking (`thinking: {type: "adaptive"}`) for anything remotely complicated. And finally, please default to streaming for any request that may involve long input, long output, or high `max_tokens` — it prevents hitting request timeouts. Use the SDK's `.get_final_message()` / `.finalMessage()` helper to get the complete response if you don't need to handle individual stream events
+
+---
+
+## Subcommands
+
+If the User Request at the bottom of this prompt is a bare subcommand string (no prose), search every **Subcommands** table in this document — including any in sections appended below — and follow the matching Action column directly. This lets users invoke specific flows via `/claude-api <subcommand>`. If no table in the document matches, treat the request as normal prose.
+
+<!-- Subcommand tables are defined per-section below; this header block contains only the dispatch rule so that feature-gated sections can add their own tables without leaking strings into ungated builds. -->
 
 ---
 
