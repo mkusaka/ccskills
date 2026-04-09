@@ -3,7 +3,7 @@ name: "build-with-claude-api-reference-guide"
 description: "Template for presenting language-specific reference documentation with quick task navigation"
 metadata:
   originalName: "Skill: Build with Claude API (reference guide)"
-  ccVersion: "2.1.91"
+  ccVersion: "2.1.97"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-build-with-claude-api-reference-guide.md"
   source:
     owner: "Piebald-AI"
@@ -42,8 +42,8 @@ The relevant documentation for your detected language is included below in `<doc
 **Agent design (tool surface, context management, caching strategy):**
 → Refer to `shared/agent-design.md`
 
-**Agent with built-in tools (file/web/terminal) (Python & TypeScript only):**
-→ Refer to `{lang}/agent-sdk/README.md` + `{lang}/agent-sdk/patterns.md`
+**Managed Agents (server-managed stateful agents):**
+→ Refer to `shared/managed-agents-overview.md` and the rest of the `shared/managed-agents-*.md` files. For Python, TypeScript, and cURL, language-specific code examples live in `{lang}/managed-agents/README.md`. Java, Go, Ruby, and PHP also support the API — translate the calls using your SDK's patterns from `{lang}/claude-api.md`. C# does not currently have Managed Agents support; use raw HTTP from `curl/managed-agents.md` as a reference.
 
 **Error handling:**
 → Refer to `shared/error-codes.md`
