@@ -3,7 +3,7 @@ name: "verify-skill"
 description: "Skill for opinionated verification workflow for validating code changes."
 metadata:
   originalName: "Skill: Verify skill"
-  ccVersion: "2.1.94"
+  ccVersion: "2.1.97"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-verify-skill.md"
   source:
     owner: "Piebald-AI"
@@ -80,17 +80,24 @@ the app. Checking that assertions match source is code review.
 
 ## Get a handle
 
-Check for existing knowledge before cold-starting:
+**Check `.claude/skills/` first — even if you already know how to
+build and run.** A matching `verifier-*` skill is the repo's
+evidence-capture protocol: it wraps the session in whatever
+recording/screenshot mechanism the review pipeline consumes. Drive
+the surface without it and you get a verdict with no replay.
 
-- **`.claude/skills/*verifier*/`** — if one matches your surface (CLI
-  verifier for a CLI change, etc.), route to it. It knows readiness
-  signals and env gotchas you don't. Mismatched surface → skip that
-  one, try the next. Stale verifier (fails on mechanics unrelated to
-  the change) → ask the user whether to patch it; don't FAIL the
-  change for verifier rot.
-- **`.claude/skills/run-*/`** — knows how to build and launch. Use its
+```bash
+ls .claude/skills/
+```
+
+- **`verifier-*` matching your surface** (CLI verifier for a CLI
+  change, etc.) → invoke it with the Skill tool and follow its
+  setup. Mismatched surface → skip that one, try the next. Stale
+  verifier (fails on mechanics unrelated to the change) → ask the
+  user whether to patch it; don't FAIL the change for verifier rot.
+- **`run-*` but no matching verifier** → use its build/launch
   primitives as your handle.
-- **Neither** — cold start from README/package.json/Makefile. Timebox
+- **Neither** → cold start from README/package.json/Makefile. Timebox
   ~15min. Stuck → BLOCKED with exactly where, plus a filled-in
   `/run-skill-generator` prompt. Got through → mention
   `/init-verifiers` in your report so next time is faster.
@@ -109,11 +116,6 @@ Smallest path that makes the changed code execute:
 typecheck / run test file — you've planned a CI rerun, not a
 verification. Find a step that reaches the surface or report BLOCKED.
 
-Once the claim checks out, keep going: break it (empty input, huge
-input, interrupt mid-op), combine it (new thing + old thing), wander
-(what's adjacent? what looked off?). The PR description is what the
-author intended. Your job includes what they didn't.
-
 **The verdict is table stakes. Your observations are the signal.**
 A PASS with three sharp "hey, I noticed…" lines is worth more than a
 bare PASS. You're the only reviewer who actually *ran* the thing —
@@ -125,6 +127,37 @@ the author doesn't have. Don't filter for "is this a bug." Filter for
 isolation doesn't mean the flow works — seams are where bugs hide.
 If users click buttons, test by clicking buttons, not by curling the
 API underneath.
+
+## Push on it
+
+The claim checked out — that's the first half. Confirming is step
+one, not the job. The PR description is what the author intended;
+your value is what they didn't.
+
+The diff told you exactly what's new. Probe *around* it, at the same
+surface you just drove:
+
+- **New flag / option** → empty value, passed twice, combined with a
+  conflicting flag, typo'd (does the error name it?)
+- **New handler / route** → wrong method, malformed body, missing
+  required field, oversized payload
+- **Changed error path** → the adjacent errors it didn't touch —
+  did the refactor catch them too, or only the one in the diff?
+- **Interactive / TUI** → Ctrl-C mid-op, resize the pane, paste
+  garbage, rapid-fire the key, Esc at the wrong moment
+- **State / persistence** → do it twice, do it with stale state
+  underneath, do it in two sessions at once
+- **Wander** → what's adjacent? What looked off while you were
+  confirming? Go back to it.
+
+These aren't a checklist — pick the ones the diff points at. Stop
+when you've covered the obvious adjacents or hit something worth a
+⚠️. A probe that finds nothing is still a step: "🔍 passed `--from ''`
+→ clean `error: --from requires a value`, exit 2." That the author
+didn't test it is exactly why it's worth knowing it holds.
+
+Still not a test run. You're at the surface, typing what a user
+would type wrong.
 
 ## Capture
 
@@ -157,9 +190,13 @@ Each step is one thing you did to the **running app** and what it
 showed. Build/install/checkout are setup, not steps. Test runs and
 typecheck don't belong here — they're CI's output.
 
-1. ✅/❌/⚠️ <what you did to the running app> → <what you observed>
+1. ✅/❌/⚠️/🔍 <what you did to the running app> → <what you observed>
    <evidence: the app's own output — pane capture, response body,
    screenshot path>
+
+🔍 marks a probe — a step off the claim's happy path, trying to
+break it. At least one. A Steps list that's all ✅ and no 🔍 is a
+happy-path replay: still PASS, but you stopped at the first half.
 
 **Screenshot / sample:** <the one frame a reviewer looks at to see
 the feature — image path for GUI/TUI, code block for library/API;
@@ -175,6 +212,10 @@ from running the app — not from reading the PR page. A red CI check,
 a review comment, someone else's bot: visible to anyone already, and
 you relaying it isn't an observation. Claim/diff mismatch, pre-existing
 breakage, and env notes also belong.
+
+Each probe gets a line here even when it held — "🔍 empty `--from`
+→ clean error" tells the author what *was* covered, which they
+can't see from a bare PASS.
 
 Lead with ⚠️ for lines worth interrupting the reviewer for — those get
 hoisted above the PR comment fold. Plain bullets are context they'll

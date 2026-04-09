@@ -1,20 +1,35 @@
 ---
-name: "build-with-claude-api"
-description: "Main routing guide for building LLM-powered applications with Claude, including language detection, surface selection, and architecture overview"
+name: "building-llm-powered-applications-with-claude"
+description: "Guides Claude in building LLM-powered applications using the Anthropic SDK, covering language detection, API surface selection (Claude API vs Managed Agents), model defaults, thinking/effort configuration, and language-specific documentation reading"
 metadata:
-  originalName: "Skill: Build with Claude API"
-  ccVersion: "2.1.94"
-  sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-build-with-claude-api.md"
+  originalName: "Skill: Building LLM-powered applications with Claude"
+  ccVersion: "2.1.97"
+  sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-building-llm-powered-applications-with-claude.md"
   source:
     owner: "Piebald-AI"
     repo: "claude-code-system-prompts"
     ref: "main"
-    path: "system-prompts/skill-build-with-claude-api.md"
+    path: "system-prompts/skill-building-llm-powered-applications-with-claude.md"
 ---
 
 # Building LLM-Powered Applications with Claude
 
 This skill helps you build LLM-powered applications with Claude. Choose the right surface based on your needs, detect the project language, then read the relevant language-specific documentation.
+
+## Before You Start
+
+Scan the target file (or, if no target file, the prompt and project) for non-Anthropic provider markers — `import openai`, `from openai`, `langchain_openai`, `OpenAI(`, `gpt-4`, `gpt-5`, file names like `agent-openai.py` or `*-generic.py`, or any explicit instruction to keep the code provider-neutral. If you find any, stop and tell the user that this skill produces Claude/Anthropic SDK code; ask whether they want to switch the file to Claude or want a non-Claude implementation. Do not edit a non-Anthropic file with Anthropic SDK calls.
+
+## Output Requirement
+
+When the user asks you to add, modify, or implement a Claude feature, your code must call Claude through one of:
+
+1. **The official Anthropic SDK** for the project's language (`anthropic`, `@anthropic-ai/sdk`, `com.anthropic.*`, etc.). This is the default whenever a supported SDK exists for the project.
+2. **Raw HTTP** (`curl`, `requests`, `fetch`, `httpx`, etc.) — only when the user explicitly asks for cURL/REST/raw HTTP, the project is a shell/cURL project, or the language has no official SDK.
+
+Never mix the two — don't reach for `requests`/`fetch` in a Python or TypeScript project just because it feels lighter. Never fall back to OpenAI-compatible shims.
+
+**Never guess SDK usage.** Function names, class names, namespaces, method signatures, and import paths must come from explicit documentation — either the `{lang}/` files in this skill or the official SDK repositories or documentation links listed in `shared/live-sources.md`. If the binding you need is not explicitly documented in the skill files, WebFetch the relevant SDK repo from `shared/live-sources.md` before writing code. Do not infer Ruby/Java/Go/PHP/C# APIs from cURL shapes or from another language's SDK.
 
 ## Defaults
 
@@ -68,16 +83,18 @@ Before reading code examples, determine which language the user is working in:
 
 ### Language-Specific Feature Support
 
-| Language   | Tool Runner | Agent SDK | Notes                                 |
-| ---------- | ----------- | --------- | ------------------------------------- |
-| Python     | Yes (beta)  | Yes       | Full support — `@beta_tool` decorator |
-| TypeScript | Yes (beta)  | Yes       | Full support — `betaZodTool` + Zod    |
-| Java       | Yes (beta)  | No        | Beta tool use with annotated classes  |
-| Go         | Yes (beta)  | No        | `BetaToolRunner` in `toolrunner` pkg  |
-| Ruby       | Yes (beta)  | No        | `BaseTool` + `tool_runner` in beta    |
-| cURL       | N/A         | N/A       | Raw HTTP, no SDK features             |
-| C#         | No          | No        | Official SDK                          |
-| PHP        | Yes (beta)  | No        | `BetaRunnableTool` + `toolRunner()`   |
+| Language   | Tool Runner | Managed Agents | Notes                                 |
+| ---------- | ----------- | -------------- | ------------------------------------- |
+| Python     | Yes (beta)  | Yes (beta)     | Full support — `@beta_tool` decorator |
+| TypeScript | Yes (beta)  | Yes (beta)     | Full support — `betaZodTool` + Zod    |
+| Java       | Yes (beta)  | Yes (beta)     | Beta tool use with annotated classes  |
+| Go         | Yes (beta)  | Yes (beta)     | `BetaToolRunner` in `toolrunner` pkg  |
+| Ruby       | Yes (beta)  | Yes (beta)     | `BaseTool` + `tool_runner` in beta    |
+| C#         | No          | No             | Official SDK                          |
+| PHP        | Yes (beta)  | Yes (beta)     | `BetaRunnableTool` + `toolRunner()`   |
+| cURL       | N/A         | Yes (beta)     | Raw HTTP, no SDK features             |
+
+> **Managed Agents code examples**: dedicated language-specific READMEs are provided for Python, TypeScript, Go, Ruby, PHP, Java, and cURL (`{lang}/managed-agents/README.md`, `curl/managed-agents.md`). Read your language's README plus the language-agnostic `shared/managed-agents-*.md` concept files. **Agents are persistent — create once, reference by ID.** Store the agent ID returned by `agents.create` and pass it to every subsequent `sessions.create`; do not call `agents.create` in the request path. The Anthropic CLI is one convenient way to create agents and environments from version-controlled YAML — its URL is in `shared/live-sources.md`. If a binding you need isn't shown in the README, WebFetch the relevant entry from `shared/live-sources.md` rather than guess. C# does not currently have Managed Agents support; use cURL-style raw HTTP requests against the API.
 
 ---
 
@@ -85,37 +102,44 @@ Before reading code examples, determine which language the user is working in:
 
 > **Start simple.** Default to the simplest tier that meets your needs. Single API calls and workflows handle most use cases — only reach for agents when the task genuinely requires open-ended, model-driven exploration.
 
-| Use Case                                        | Tier            | Recommended Surface       | Why                                     |
-| ----------------------------------------------- | --------------- | ------------------------- | --------------------------------------- |
-| Classification, summarization, extraction, Q&A  | Single LLM call | **Claude API**            | One request, one response               |
-| Batch processing or embeddings                  | Single LLM call | **Claude API**            | Specialized endpoints                   |
-| Multi-step pipelines with code-controlled logic | Workflow        | **Claude API + tool use** | You orchestrate the loop                |
-| Custom agent with your own tools                | Agent           | **Claude API + tool use** | Maximum flexibility                     |
-| AI agent with file/web/terminal access          | Agent           | **Agent SDK**             | Built-in tools, safety, and MCP support |
-| Agentic coding assistant                        | Agent           | **Agent SDK**             | Designed for this use case              |
-| Want built-in permissions and guardrails        | Agent           | **Agent SDK**             | Safety features included                |
+| Use Case                                        | Tier            | Recommended Surface       | Why                                                          |
+| ----------------------------------------------- | --------------- | ------------------------- | ------------------------------------------------------------ |
+| Classification, summarization, extraction, Q&A  | Single LLM call | **Claude API**            | One request, one response                                    |
+| Batch processing or embeddings                  | Single LLM call | **Claude API**            | Specialized endpoints                                        |
+| Multi-step pipelines with code-controlled logic | Workflow        | **Claude API + tool use** | You orchestrate the loop                                     |
+| Custom agent with your own tools                | Agent           | **Claude API + tool use** | Maximum flexibility                                          |
+| Server-managed stateful agent with workspace    | Agent           | **Managed Agents**        | Anthropic runs the loop and hosts the tool-execution sandbox |
+| Persisted, versioned agent configs              | Agent           | **Managed Agents**        | Agents are stored objects; sessions pin to a version         |
+| Long-running multi-turn agent with file mounts  | Agent           | **Managed Agents**        | Per-session containers, SSE event stream, Skills + MCP       |
 
-> **Note:** The Agent SDK is for when you want built-in file/web/terminal tools, permissions, and MCP out of the box. If you want to build an agent with your own tools, Claude API is the right choice — use the tool runner for automatic loop handling, or the manual loop for fine-grained control (approval gates, custom logging, conditional execution).
+> **Note:** Managed Agents is the right choice when you want Anthropic to run the agent loop *and* host the container where tools execute — file ops, bash, code execution all run in the per-session workspace. If you want to host the compute yourself or run your own custom tool runtime, Claude API + tool use is the right choice — use the tool runner for automatic loop handling, or the manual loop for fine-grained control (approval gates, custom logging, conditional execution).
+
+> **Third-party providers (Amazon Bedrock, Google Vertex AI, Microsoft Foundry):** Managed Agents is **not available** on Bedrock, Vertex, or Foundry. If you are deploying through any third-party provider, use **Claude API + tool use** for all use cases — including ones where Managed Agents would otherwise be the recommended surface.
 
 ### Decision Tree
 
 ```
 What does your application need?
 
+0. Are you deploying through Amazon Bedrock, Google Vertex AI, or Microsoft Foundry?
+   └── Yes → Claude API (+ tool use for agents) — Managed Agents is 1P only.
+   No → continue.
+
 1. Single LLM call (classification, summarization, extraction, Q&A)
    └── Claude API — one request, one response
 
-2. Does Claude need to read/write files, browse the web, or run shell commands
-   as part of its work? (Not: does your app read a file and hand it to Claude —
-   does Claude itself need to discover and access files/web/shell?)
-   └── Yes → Agent SDK — built-in tools, don't reimplement them
-       Examples: "scan a codebase for bugs", "summarize every file in a directory",
-                 "find bugs using subagents", "research a topic via web search"
+2. Do you want Anthropic to run the agent loop and host a per-session
+   container where Claude executes tools (bash, file ops, code)?
+   └── Yes → Managed Agents — server-managed sessions, persisted agent configs,
+       SSE event stream, Skills + MCP, file mounts.
+       Examples: "stateful coding agent with a workspace per task",
+                 "long-running research agent that streams events to a UI",
+                 "agent with persisted, versioned config used across many sessions"
 
 3. Workflow (multi-step, code-orchestrated, with your own tools)
    └── Claude API with tool use — you control the loop
 
-4. Open-ended agent (model decides its own trajectory, your own tools)
+4. Open-ended agent (model decides its own trajectory, your own tools, you host the compute)
    └── Claude API agentic loop (maximum flexibility)
 ```
 
@@ -196,7 +220,29 @@ See `{lang}/claude-api/README.md` (Compaction section) for code examples. Full d
 
 For placement patterns, architectural guidance, and the silent-invalidator audit checklist: read `shared/prompt-caching.md`. Language-specific syntax: `{lang}/claude-api/README.md` (Prompt Caching section).
 
-<!-- __S3__ -->
+---
+
+## Managed Agents (Beta)
+
+**Managed Agents** is a third surface: server-managed stateful agents with Anthropic-hosted tool execution. You create a persisted, versioned Agent config (`POST /v1/agents`), then start Sessions that reference it. Each session provisions a container as the agent's workspace — bash, file ops, and code execution run there; the agent loop itself runs on Anthropic's orchestration layer and acts on the container via tools. The session streams events; you send messages and tool results back.
+
+**Managed Agents is first-party only.** It is not available on Amazon Bedrock, Google Vertex AI, or Microsoft Foundry. For agents on third-party providers, use Claude API + tool use.
+
+**Mandatory flow:** Agent (once) → Session (every run). `model`/`system`/`tools` live on the agent, never the session. See `shared/managed-agents-overview.md` for the full reading guide, beta headers, and pitfalls.
+
+**Beta headers:** `managed-agents-2026-04-01` — the SDK sets this automatically for all `client.beta.{agents,environments,sessions,vaults}.*` calls. Skills API uses `skills-2025-10-02` and Files API uses `files-api-2025-04-14`, but you don't need to explicitly pass those in for endpoints other than `/v1/skills` and `/v1/files`.
+
+**Subcommands** — invoke directly with `/claude-api <subcommand>`:
+
+| Subcommand | Action |
+|---|---|
+| `managed-agents-onboard` | Walk the user through setting up a Managed Agent from scratch. **Read `shared/managed-agents-onboarding.md` immediately** and follow its interview script: mental model → know-or-explore branch → template config → session setup → emit code. Do not summarize — run the interview. |
+
+**Reading guide:** Start with `shared/managed-agents-overview.md`, then the topical `shared/managed-agents-*.md` files (core, environments, tools, events, client-patterns, onboarding, api-reference). For Python, TypeScript, Go, Ruby, PHP, and Java, read `{lang}/managed-agents/README.md` for code examples. For cURL, read `curl/managed-agents.md`. **Agents are persistent — create once, reference by ID.** Store the agent ID returned by `agents.create` and pass it to every subsequent `sessions.create`; do not call `agents.create` in the request path. The Anthropic CLI is one convenient way to create agents and environments from version-controlled YAML (URL in `shared/live-sources.md`). If a binding you need isn't shown in the language README, WebFetch the relevant entry from `shared/live-sources.md` rather than guess. C# does not currently have Managed Agents support; use raw HTTP from `curl/managed-agents.md` as a reference.
+
+**When the user wants to set up a Managed Agent from scratch** (e.g. "how do I get started", "walk me through creating one", "set up a new agent"): read `shared/managed-agents-onboarding.md` and run its interview — same flow as the `managed-agents-onboard` subcommand.
+
+**When the user asks "how do I write the client code for X":** reach for `shared/managed-agents-client-patterns.md` — covers lossless stream reconnect, `processed_at` queued/processed gate, interrupt, `tool_confirmation` round-trip, the correct idle/terminated break gate, post-idle status race, stream-first ordering, file-mount gotchas, keeping credentials host-side via custom tools, etc.
 
 ---
 
@@ -230,8 +276,8 @@ After detecting the language, read the relevant files based on what the user nee
 **File uploads across multiple requests:**
 → Read `{lang}/claude-api/README.md` + `{lang}/claude-api/files-api.md`
 
-**Agent with built-in tools (file/web/terminal):**
-→ Read `{lang}/agent-sdk/README.md` + `{lang}/agent-sdk/patterns.md`
+**Managed Agents (server-managed stateful agents with workspace):**
+→ Read `shared/managed-agents-overview.md` + the rest of the `shared/managed-agents-*.md` files. For Python, TypeScript, Go, Ruby, PHP, and Java, read `{lang}/managed-agents/README.md` for code examples. For cURL, read `curl/managed-agents.md`. **Agents are persistent — create once, reference by ID.** Store the agent ID returned by `agents.create` and pass it to every subsequent `sessions.create`; do not call `agents.create` in the request path. The Anthropic CLI is one convenient way to create agents and environments from version-controlled YAML (URL in `shared/live-sources.md`). If a binding you need isn't shown in the language README, WebFetch the relevant entry from `shared/live-sources.md` rather than guess. C# does not currently support Managed Agents — use raw HTTP from `curl/managed-agents.md` as a reference.
 
 ### Claude API (Full File Reference)
 
@@ -250,13 +296,7 @@ Read the **language-specific Claude API folder** (`{language}/claude-api/`):
 
 > **Note:** For Java, Go, Ruby, C#, PHP, and cURL — these have a single file each covering all basics. Read that file plus `shared/tool-use-concepts.md` and `shared/error-codes.md` as needed.
 
-### Agent SDK
-
-Read the **language-specific Agent SDK folder** (`{language}/agent-sdk/`). Agent SDK is available for **Python and TypeScript only**.
-
-1. **`{language}/agent-sdk/README.md`** — Installation, quick start, built-in tools, permissions, MCP, hooks.
-2. **`{language}/agent-sdk/patterns.md`** — Custom tools, hooks, subagents, MCP integration, session resumption.
-3. **`shared/live-sources.md`** — WebFetch URLs for current Agent SDK docs.
+> **Note:** For the Managed Agents file reference, see the `## Managed Agents (Beta)` section above — it lists every `shared/managed-agents-*.md` file and the language-specific READMEs.
 
 ---
 
