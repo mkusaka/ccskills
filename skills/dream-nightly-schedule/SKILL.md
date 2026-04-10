@@ -3,7 +3,7 @@ name: "dream-nightly-schedule"
 description: "Sets up a recurring nightly memory consolidation job by deduplicating existing schedules, creating a new cron task, confirming details to the user, and running an immediate consolidation"
 metadata:
   originalName: "Skill: /dream nightly schedule"
-  ccVersion: "2.1.97"
+  ccVersion: "2.1.98"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-dream-nightly-schedule.md"
   source:
     owner: "Piebald-AI"
@@ -20,6 +20,7 @@ metadata:
     - "CONSOLIDATE_SKILL_FN"
     - "CONSOLIDATE_PROMPT"
     - "MEMORY_STORE_PATH"
+    - "MEMORY_DIR"
     - "CONSOLIDATION_OPTIONS"
 ---
 
@@ -51,4 +52,4 @@ Tell the user:
 
 **Step 4 — Run an immediate consolidation**
 
-${CONSOLIDATE_SKILL_FN(CONSOLIDATE_PROMPT,MEMORY_STORE_PATH,CONSOLIDATION_OPTIONS)}
+${CONSOLIDATE_SKILL_FN(CONSOLIDATE_PROMPT,MEMORY_STORE_PATH,MEMORY_DIR,CONSOLIDATION_OPTIONS)}
