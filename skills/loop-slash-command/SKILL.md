@@ -3,7 +3,7 @@ name: "loop-slash-command"
 description: "Parses user input into an interval and prompt, converts the interval to a cron expression, and schedules a recurring task"
 metadata:
   originalName: "Skill: /loop slash command"
-  ccVersion: "2.1.79"
+  ccVersion: "2.1.101"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-loop-slash-command.md"
   source:
     owner: "Piebald-AI"
@@ -13,8 +13,10 @@ metadata:
   variables:
     - "CRON_CREATE_TOOL_NAME"
     - "DEFAULT_INTERVAL"
+    - "ADDITIONAL_PARSING_NOTES_FN"
     - "CANCEL_TIMEFRAME_DAYS"
     - "CRON_DELETE_TOOL_NAME"
+    - "ADDITIONAL_INFO_FN"
     - "USER_INPUT"
 ---
 
@@ -37,7 +39,7 @@ Examples:
 - `check the deploy` → interval `${DEFAULT_INTERVAL}`, prompt `check the deploy` (rule 3)
 - `check every PR` → interval `${DEFAULT_INTERVAL}`, prompt `check every PR` (rule 3 — "every" not followed by time)
 - `5m` → empty prompt → show usage
-
+${ADDITIONAL_PARSING_NOTES_FN()}
 ## Interval → cron
 
 Supported suffixes: `s` (seconds, rounded up to nearest minute, min 1), `m` (minutes), `h` (hours), `d` (days). Convert:
@@ -58,7 +60,7 @@ Supported suffixes: `s` (seconds, rounded up to nearest minute, min 1), `m` (min
    - `cron`: the expression from the table above
    - `prompt`: the parsed prompt from above, verbatim (slash commands are passed through unchanged)
    - `recurring`: `true`
-2. Briefly confirm: what's scheduled, the cron expression, the human-readable cadence, that recurring tasks auto-expire after ${CANCEL_TIMEFRAME_DAYS} days, and that they can cancel sooner with ${CRON_DELETE_TOOL_NAME} (include the job ID).
+2. Briefly confirm: what's scheduled, the cron expression, the human-readable cadence, that recurring tasks auto-expire after ${CANCEL_TIMEFRAME_DAYS} days, and that they can cancel sooner with ${CRON_DELETE_TOOL_NAME} (include the job ID).${ADDITIONAL_INFO_FN()}
 3. **Then immediately execute the parsed prompt now** — don't wait for the first cron fire. If it's a slash command, invoke it via the Skill tool; otherwise act on it directly.
 
 ## Input
