@@ -3,7 +3,6 @@
   "selection": "builtin-skills",
   "skills": [
     "agent-design-patterns",
-    "build-claude-api-and-sdk-apps",
     "build-with-claude-api-reference-guide",
     "building-llm-powered-applications-with-claude",
     "computer-use-mcp",
