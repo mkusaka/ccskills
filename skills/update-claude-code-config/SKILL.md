@@ -3,7 +3,7 @@ name: "update-claude-code-config"
 description: "Skill for modifying Claude Code configuration file (settings.json)."
 metadata:
   originalName: "Skill: Update Claude Code Config"
-  ccVersion: "2.1.77"
+  ccVersion: "2.1.108"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-update-claude-code-config.md"
   source:
     owner: "Piebald-AI"
@@ -71,7 +71,7 @@ When adding to permission arrays or hook arrays, **merge with existing**, don't 
 
 **WRONG** (replaces existing permissions):
 ```json
-{ "permissions": { "allow": ["Bash(npm:*)"] } }
+{ "permissions": { "allow": ["Bash(npm *)"] } }
 ```
 
 **RIGHT** (preserves existing + adds new):
@@ -79,9 +79,9 @@ When adding to permission arrays or hook arrays, **merge with existing**, don't 
 {
   "permissions": {
     "allow": [
-      "Bash(git:*)",      // existing
+      "Bash(git *)",      // existing
       "Edit(.claude)",    // existing
-      "Bash(npm:*)"       // new
+      "Bash(npm *)"       // new
     ]
   }
 }
@@ -122,7 +122,7 @@ User: "Format my code after Claude writes it"
 User: "Allow npm commands without prompting"
 
 1. **Read**: Existing permissions
-2. **Merge**: Add `Bash(npm:*)` to allow array
+2. **Merge**: Add `Bash(npm *)` to allow array
 3. **Result**: Combined with existing allows
 
 ### Environment Variables
