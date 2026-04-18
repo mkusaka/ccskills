@@ -3,7 +3,7 @@ name: "generate-permission-allowlist-from-transcripts"
 description: "Analyzes session transcripts to extract frequently used read-only tool-call patterns and adds them to the project's .claude/settings.json permission allowlist to reduce permission prompts"
 metadata:
   originalName: "Skill: Generate permission allowlist from transcripts"
-  ccVersion: "2.1.111"
+  ccVersion: "2.1.113"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-generate-permission-allowlist-from-transcripts.md"
   source:
     owner: "Piebald-AI"
@@ -12,7 +12,7 @@ metadata:
     path: "system-prompts/skill-generate-permission-allowlist-from-transcripts.md"
 ---
 
-# Less Permission Prompts
+# Fewer Permission Prompts
 
 Look through my transcripts' MCP and bash tool calls, and based on those, make a prioritized list of patterns that I should add to my permission allowlist to reduce permission prompts. Focus on read-only commands.
 
