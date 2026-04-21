@@ -3,7 +3,7 @@ name: "model-migration-guide"
 description: "Step-by-step instructions for migrating existing code to newer Claude models, covering breaking changes, deprecated parameters, per-SDK syntax, prompt-behavior shifts, and migration checklists"
 metadata:
   originalName: "Skill: Model migration guide"
-  ccVersion: "2.1.111"
+  ccVersion: "2.1.116"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-model-migration-guide.md"
   source:
     owner: "Piebald-AI"
@@ -13,6 +13,8 @@ metadata:
 ---
 
 # Model Migration Guide
+
+> **If you arrived via `/claude-api migrate`:** this is the right file. Execute the steps below in order — do not summarize them back to the user. Start with Step 0 (confirm scope) before touching any file.
 
 How to move existing code to newer Claude models. Covers breaking changes, deprecated parameters, and drop-in replacements for retired models.
 
