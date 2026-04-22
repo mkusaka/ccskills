@@ -27,7 +27,6 @@
     "update-config-7-step-verification-flow",
     "verify-cli-changes-example-for-verify-skill",
     "verify-serverapi-changes-example-for-verify-skill",
-    "verify-skill",
-    "verify-skill-runtime-verification"
+    "verify-skill"
   ]
 }
