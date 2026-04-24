@@ -3,7 +3,7 @@ name: "update-claude-code-config"
 description: "Skill for modifying Claude Code configuration file (settings.json)."
 metadata:
   originalName: "Skill: Update Claude Code Config"
-  ccVersion: "2.1.108"
+  ccVersion: "2.1.118"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-update-claude-code-config.md"
   source:
     owner: "Piebald-AI"
@@ -43,9 +43,9 @@ When the user's request is ambiguous, use AskUserQuestion to clarify:
 - Whether to add to existing arrays or replace them
 - Specific values when multiple options exist
 
-## Decision: Config Tool vs Direct Edit
+## Decision: /config command vs Direct Edit
 
-**Use the Config tool** for these simple settings:
+**Suggest the `/config` slash command** for these simple settings:
 - `theme`, `editorMode`, `verbose`, `model`
 - `language`, `alwaysThinkingEnabled`
 - `permissions.defaultMode`
