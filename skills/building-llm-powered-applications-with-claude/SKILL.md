@@ -3,7 +3,7 @@ name: "building-llm-powered-applications-with-claude"
 description: "Guides Claude in building LLM-powered applications using the Anthropic SDK, covering language detection, API surface selection (Claude API vs Managed Agents), model defaults, thinking/effort configuration, and language-specific documentation reading"
 metadata:
   originalName: "Skill: Building LLM-powered applications with Claude"
-  ccVersion: "2.1.132"
+  ccVersion: "2.1.139"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-building-llm-powered-applications-with-claude.md"
   source:
     owner: "Piebald-AI"
@@ -116,16 +116,16 @@ Before reading code examples, determine which language the user is working in:
 
 > **Note:** Managed Agents is the right choice when you want Anthropic to run the agent loop *and* host the container where tools execute — file ops, bash, code execution all run in the per-session workspace. If you want to host the compute yourself or run your own custom tool runtime, Claude API + tool use is the right choice — use the tool runner for automatic loop handling, or the manual loop for fine-grained control (approval gates, custom logging, conditional execution).
 
-> **Third-party providers (Amazon Bedrock, Google Vertex AI, Microsoft Foundry):** Managed Agents is **not available** on Bedrock, Vertex, or Foundry. If you are deploying through any third-party provider, use **Claude API + tool use** for all use cases — including ones where Managed Agents would otherwise be the recommended surface.
+> **Cloud-provider access.** **Claude Platform on AWS** is Anthropic-operated with same-day API parity — Managed Agents and every feature in this skill work there (see `shared/claude-platform-on-aws.md`). **Amazon Bedrock**, **Google Vertex AI**, and **Microsoft Foundry** do **not** support Managed Agents or Anthropic server-side tools; use **Claude API + tool use** on those.
 
 ### Decision Tree
 
 ```
 What does your application need?
 
-0. Are you deploying through Amazon Bedrock, Google Vertex AI, or Microsoft Foundry?
-   └── Yes → Claude API (+ tool use for agents) — Managed Agents is 1P only.
-   No → continue.
+0. Which provider?
+   ├── First-party API or Claude Platform on AWS → continue (full surface available).
+   └── Amazon Bedrock, Google Vertex AI, or Microsoft Foundry → Claude API (+ tool use for agents); Managed Agents not available there.
 
 1. Single LLM call (classification, summarization, extraction, Q&A)
    └── Claude API — one request, one response
@@ -233,7 +233,7 @@ For placement patterns, architectural guidance, and the silent-invalidator audit
 
 **Managed Agents** is a third surface: server-managed stateful agents with Anthropic-hosted tool execution. You create a persisted, versioned Agent config (`POST /v1/agents`), then start Sessions that reference it. Each session provisions a container as the agent's workspace — bash, file ops, and code execution run there; the agent loop itself runs on Anthropic's orchestration layer and acts on the container via tools. The session streams events; you send messages and tool results back.
 
-**Managed Agents is first-party only.** It is not available on Amazon Bedrock, Google Vertex AI, or Microsoft Foundry. For agents on third-party providers, use Claude API + tool use.
+**Managed Agents is available on the first-party API and Claude Platform on AWS.** It is **not** available on Amazon Bedrock, Google Vertex AI, or Microsoft Foundry — for agents there, use Claude API + tool use.
 
 **Mandatory flow:** Agent (once) → Session (every run). `model`/`system`/`tools` live on the agent, never the session. See `shared/managed-agents-overview.md` for the full reading guide, beta headers, and pitfalls.
 

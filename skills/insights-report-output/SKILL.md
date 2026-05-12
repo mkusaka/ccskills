@@ -3,7 +3,7 @@ name: "insights-report-output"
 description: "Formats and displays the insights usage report results after the user runs the /insights slash command"
 metadata:
   originalName: "Skill: /insights report output"
-  ccVersion: "2.1.101"
+  ccVersion: "2.1.139"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-insights-report-output.md"
   source:
     owner: "Piebald-AI"
@@ -17,7 +17,6 @@ metadata:
     - "FACETS_DIRECTORY"
     - "AT_A_GLANCE_SUMMARY"
     - "ADDITIONAL_CONTEXT_BLOCK"
-    - "ADDITIONAL_MESSAGE_BLOCK"
 ---
 
 The user just ran /insights to generate a usage report analyzing their Claude Code sessions.
@@ -36,7 +35,7 @@ Output the text between <message> tags verbatim as your entire response. Do not 
 
 <message>
 Your shareable insights report is ready:
-${REPORT_URL}${ADDITIONAL_MESSAGE_BLOCK}
+${REPORT_URL}
 
 Want to dig into any section or try one of the suggestions?
 </message>
