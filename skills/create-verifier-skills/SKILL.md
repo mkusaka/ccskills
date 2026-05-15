@@ -3,16 +3,20 @@ name: "create-verifier-skills"
 description: "Prompt for creating verifier skills for the Verify agent to automatically verify code changes"
 metadata:
   originalName: "Skill: Create verifier skills"
-  ccVersion: "2.1.108"
+  ccVersion: "2.1.142"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-create-verifier-skills.md"
   source:
     owner: "Piebald-AI"
     repo: "claude-code-system-prompts"
     ref: "main"
     path: "system-prompts/skill-create-verifier-skills.md"
+  variables:
+    - "ENABLE_TASKS_FEATURE"
+    - "TASKCREATE_TOOL_NAME"
+    - "TODOWRITE_TOOL_NAME"
 ---
 
-Use the TodoWrite tool to track your progress through this multi-step task.
+Use the ${ENABLE_TASKS_FEATURE()?TASKCREATE_TOOL_NAME:TODOWRITE_TOOL_NAME} tool to track your progress through this multi-step task.
 
 ## Goal
 
