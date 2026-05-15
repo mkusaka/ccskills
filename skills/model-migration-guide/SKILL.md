@@ -3,7 +3,7 @@ name: "model-migration-guide"
 description: "Step-by-step instructions for migrating existing code to newer Claude models, covering breaking changes, deprecated parameters, per-SDK syntax, prompt-behavior shifts, and migration checklists"
 metadata:
   originalName: "Skill: Model migration guide"
-  ccVersion: "2.1.139"
+  ccVersion: "2.1.142"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-model-migration-guide.md"
   source:
     owner: "Piebald-AI"
@@ -495,6 +495,21 @@ If the model is now overtriggering a tool or skill, the fix is almost always to 
 | `claude-sonnet-4-0`            | `claude-sonnet-4-6`|
 
 Older aliases (`claude-opus-4-5`, `claude-sonnet-4-5`, `claude-opus-4-1`, etc.) are still active and can be pinned if you need time before upgrading — see `shared/models.md` for the full legacy list.
+
+### Amazon Bedrock model IDs
+
+If the code uses the `AnthropicBedrockMantle` client (Python `anthropic[bedrock]`, TypeScript `@anthropic-ai/bedrock-sdk`, Java `BedrockMantleBackend`, Go `bedrock.NewMantleClient`, etc.) or targets `https://bedrock-mantle.{region}.api.aws/anthropic`, it is running on **Claude in Amazon Bedrock**. All breaking changes in this guide apply unchanged there — it serves the same Messages API shape — but model IDs carry an `anthropic.` provider prefix:
+
+| First-party ID | Bedrock ID |
+|---|---|
+| `claude-opus-4-7` | `anthropic.claude-opus-4-7` |
+| `claude-haiku-4-5` | `anthropic.claude-haiku-4-5` |
+
+When migrating a Bedrock file, apply the same rename-table row as first-party, then keep/add the `anthropic.` prefix. Do **not** generate a first-party `claude-*` ID for a Bedrock client — it will 400.
+
+**Skip for Bedrock:** the `code_execution_*` tool-version checklist item and the **Task Budgets** section — both are first-party-only features (Bedrock does not support server-side Anthropic tools or the `task-budgets-2026-03-13` beta). Everything else in this guide — `effort`, adaptive/extended thinking, `output_config.format`, `thinking.display`, fine-grained tool streaming, token counting — is available on Bedrock.
+
+> **Out of scope:** the legacy Amazon Bedrock integration (`InvokeModel` / `Converse` APIs with ARN-versioned IDs like `anthropic.claude-3-5-sonnet-20241022-v2:0`) uses a different request shape and model-ID format. This guide does not cover it; WebFetch the Bedrock page in `shared/live-sources.md` if the user is migrating between the two Bedrock integrations.
 
 ### Claude Platform on AWS
 
