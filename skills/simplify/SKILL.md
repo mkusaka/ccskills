@@ -3,7 +3,7 @@ name: "simplify"
 description: "Instructions for simplifying code"
 metadata:
   originalName: "Skill: Simplify"
-  ccVersion: "2.1.116"
+  ccVersion: "2.1.146"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-simplify.md"
   source:
     owner: "Piebald-AI"
@@ -14,7 +14,7 @@ metadata:
     - "AGENT_TOOL_NAME"
 ---
 
-# Simplify: Code Review and Cleanup
+# Code Review and Cleanup
 
 Review all changed files for reuse, quality, and efficiency. Fix any issues found.
 
