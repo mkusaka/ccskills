@@ -1,0 +1,4 @@
+excludes:
+  - policy_name: job_secrets
+    workflow_file_path: .github/workflows/sync-piebald-skills.yml
+    job_name: sync
