@@ -3,7 +3,7 @@ name: "building-llm-powered-applications-with-claude"
 description: "Guides Claude in building LLM-powered applications using the Anthropic SDK, covering language detection, API surface selection (Claude API vs Managed Agents), model defaults, thinking/effort configuration, and language-specific documentation reading"
 metadata:
   originalName: "Skill: Building LLM-powered applications with Claude"
-  ccVersion: "2.1.154"
+  ccVersion: "2.1.163"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-building-llm-powered-applications-with-claude.md"
   source:
     owner: "Piebald-AI"
@@ -168,7 +168,7 @@ Everything goes through `POST /v1/messages`. Tools and output constraints are fe
 
 **Structured outputs** — Constrains the Messages API response format (`output_config.format`) and/or tool parameter validation (`strict: true`). The recommended approach is `client.messages.parse()` which validates responses against your schema automatically. Note: the old `output_format` parameter is deprecated; use `output_config: {format: {...}}` on `messages.create()`.
 
-**Supporting endpoints** — Batches (`POST /v1/messages/batches`), Files (`POST /v1/files`), Token Counting, and Models (`GET /v1/models`, `GET /v1/models/{id}` — live capability/context-window discovery) feed into or support Messages API requests.
+**Supporting endpoints** — Batches (`POST /v1/messages/batches`), Files (`POST /v1/files`), Token Counting (`POST /v1/messages/count_tokens` — see `shared/token-counting.md`), and Models (`GET /v1/models`, `GET /v1/models/{id}` — live capability/context-window discovery) feed into or support Messages API requests.
 
 ---
 
@@ -274,6 +274,8 @@ After detecting the language, read the relevant files based on what the user nee
 → Read `shared/model-migration.md`
 **Prompt caching / optimize caching / "why is my cache hit rate low":**
 → Read `shared/prompt-caching.md` + `{lang}/claude-api/README.md` (Prompt Caching section)
+**Count tokens in a file / prompt / diff ("how many tokens is X"):**
+→ Read `shared/token-counting.md` — use `messages.count_tokens`, never `tiktoken`
 
 **Function calling / tool use / agents:**
 → Read `{lang}/claude-api/README.md` + `shared/tool-use-concepts.md` + `{lang}/claude-api/tool-use.md`

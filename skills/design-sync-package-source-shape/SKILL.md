@@ -3,7 +3,7 @@ name: "design-sync-package-source-shape"
 description: "Shape-specific /design-sync instructions for syncing a React design system from a built package without Storybook"
 metadata:
   originalName: "Skill: /design-sync package source shape"
-  ccVersion: "2.1.162"
+  ccVersion: "2.1.163"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-design-sync-package-source-shape.md"
   source:
     owner: "Piebald-AI"
@@ -31,7 +31,7 @@ No Storybook — the component list comes from the package's shipped `.d.ts` exp
    |---|---|
    | `pkg` / `globalName` | package name and the `window.*` global to assign — required |
    | `shape` | `'storybook'` or `'package'` — pins the source shape (overrides auto-detection). Written on first run. |
-   | `buildCmd` | the discovered build command; re-sync re-runs it |
+   | `buildCmd` | the discovered build command — tells Claude what to re-run before the converter on re-sync |
    | `srcDir` | source root when not `src/`/`lib/`/`components/` |
    | `tsconfig` | path to `tsconfig.json` — esbuild reads `compilerOptions.paths` so `@/…` path aliases resolve in synth-entry mode |
    | `extraEntries` | package names to merge into `window.<globalName>` alongside the DS entry (e.g. the DS's separate icon package). Sibling icon packages under the same scope are auto-detected (`[ICON_PKG]`). |
@@ -46,7 +46,7 @@ No Storybook — the component list comes from the package's shipped `.d.ts` exp
    | `runtimeFontPrefixes` | string[] — family-name prefixes for fonts the host app serves at runtime from a font service (via a `<script>` or JS loader, so there's no `@font-face` to ship). Suppresses `[FONT_MISSING]` for matching families. Use when the brand font is never meant to ship with the bundle. |
    | `replaces` | `{<raw-element>: [<ComponentName>, …]}` — extends the adherence-config raw-element map |
    | `libOverrides` | `{"<name>.mjs": "<one-line reason>"}` — declares which `.design-sync/lib/*.mjs` files this repo forks and why (see §Troubleshooting). Cross-checked at build time. |
-   | `notes` | path to a markdown notes file — default `"./.design-sync/NOTES.md"`. |
+   | `notes` | path to a markdown notes file — default `"./.design-sync/NOTES.md"`. Read by Claude for repo gotchas and passed through to the uploaded README; the converter itself doesn't read it. |
 
    **`.design-sync/NOTES.md`** is where repo-specific quirks live (workspace build order, flaky stories, odd entry paths, anything a future re-sync should know). Write it as multi-line markdown — one bullet per gotcha. **Append to it whenever you learn something during the verify loop**, and commit it alongside the config.
 
@@ -115,6 +115,12 @@ Per component, under `components/<group>/<Name>/`: `<Name>.jsx` (one-line re-exp
 | — | Icons render as empty boxes or are missing | The DS's icon package isn't in the bundle. Check the build log for `[ICON_PKG]` (same-scope icon packages are auto-included); if it didn't fire, add the icon package name to `cfg.extraEntries`. |
 | — | Components render but no CSS | Set `cfg.cssEntry` to the package's stylesheet. |
 | — | "Missing brand fonts" banner in the DS pane | Same root cause as `[FONT_MISSING]`: the bundle references families it doesn't ship. Wire them via `cfg.extraFonts` if the files are available and licensing allows, or accept substitutes. |
+| `[FONT_REMOTE]` | families resolved via a remote `@import` | Informational — a font-host `@import url(...)` is present in `styles.css`; the families load at runtime. No action. |
+| `[DTS_PARSE]` | `<Name>.d.ts:<line>: <ts error>` | The emitted `.d.ts` isn't valid TypeScript — usually a complex generic or cross-package type the extractor couldn't flatten. Write `cfg.dtsPropsFor.<Name>` with a hand-written props body. |
+| `[DTS_STYLE_SYSTEM]` | `filtering <pkg> props` | Informational — a style-system prop bag (margin/padding/color shorthands) was filtered from `<Name>Props`. Override a component with `cfg.dtsPropsFor.<Name>` if those were real API. |
+| `[PROVIDER_INVALID]` | `cfg.provider component "…" isn't a valid identifier path` | `cfg.provider.component` must be a `Name` or `Name.SubName` export from the DS. Fix the name (check `Object.keys(window.<Global>)`). |
+| `[OVERRIDE_UNDECLARED]` | `.design-sync/lib/<f>` forked but not in `cfg.libOverrides` | Add `"libOverrides": {"<f>": "<one-line reason>"}` to the config so re-sync knows the fork is intentional. |
+| `[OVERRIDE_MISSING]` | `cfg.libOverrides` declares `<f>` but the fork file doesn't exist | Either remove the `libOverrides` entry or restore `.design-sync/lib/<f>`. |
 | — | `! extraFonts: <path> resolves outside the workspace root — skipped` | `extraFonts` entries are bounded to `dirname(--node-modules)`. In pnpm-workspace / yarn-nohoist repos where `--node-modules` is the per-package `node_modules`, a sibling typography package falls outside that boundary. Workaround: copy the `@font-face` css + woff2s under the DS package and point `extraFonts` there, or re-run with the repo-root `node_modules` where the package manager allows it. |
 
 ## 4. Verify previews render
