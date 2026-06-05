@@ -3,7 +3,7 @@ name: "design-sync-slash-command"
 description: "Skill definition for syncing a React design system to claude.ai/design, including project selection, source-shape detection, converter configuration, validation, upload planning, and self-check behavior"
 metadata:
   originalName: "Skill: /design-sync slash command"
-  ccVersion: "2.1.162"
+  ccVersion: "2.1.163"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-design-sync-slash-command.md"
   source:
     owner: "Piebald-AI"
@@ -42,4 +42,4 @@ The workflow is **explore the repo → write `design-sync.config.json` → run t
    - Found `*.stories.*` files but no `.storybook/` dir in the target → `AskUserQuestion`: "Found story files but no `.storybook/` here — is there a Storybook config elsewhere in this repo (e.g. `apps/storybook/.storybook` in a monorepo)?" If they point at one → `shape = 'storybook'`, record that path as `storybookConfigDir`. If they say no → `shape = 'package'`.
    - No `.storybook/` and no `*.stories.*` → `AskUserQuestion` whether a Storybook exists at all. If they point at one, record it as `storybookConfigDir` and `shape = 'storybook'`. If no, `shape = 'package'`.
 
-Then `Read` `<skill-base-dir>/storybook/SKILL.md` or `<skill-base-dir>/non-storybook/SKILL.md` and follow it from there — each is self-contained. Record `"shape"` (and `"storybookConfigDir"` when set) in `design-sync.config.json` when you write it so re-sync skips detection. The converter scripts are shared across shapes and live at `<skill-base-dir>/package-build.mjs`, `package-validate.mjs`, and `lib/`.
+Then `Read` `<skill-base-dir>/storybook/SKILL.md` or `<skill-base-dir>/non-storybook/SKILL.md` and follow it from there — each is self-contained. Record `"shape"` (and `"storybookConfigDir"` when set) in `design-sync.config.json` when you write it so re-sync skips detection. The converter scripts live at `<skill-base-dir>/lib/` (shared) and `<skill-base-dir>/storybook/` (storybook-shape entry points); the package shape's entry is `<skill-base-dir>/package-build.mjs`.

@@ -3,7 +3,7 @@ name: "build-with-claude-api-reference-guide"
 description: "Template for presenting language-specific reference documentation with quick task navigation"
 metadata:
   originalName: "Skill: Build with Claude API (reference guide)"
-  ccVersion: "2.1.118"
+  ccVersion: "2.1.163"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-build-with-claude-api-reference-guide.md"
   source:
     owner: "Piebald-AI"
@@ -32,6 +32,9 @@ The relevant documentation for your detected language is included below in `<doc
 
 **Prompt caching / optimize caching / "why is my cache hit rate low":**
 → Refer to `shared/prompt-caching.md` + `{lang}/claude-api/README.md` (Prompt Caching section)
+
+**Count tokens in a file / prompt / diff ("how many tokens is X"):**
+→ Refer to `shared/token-counting.md` — use `messages.count_tokens`, never `tiktoken`
 
 **Function calling / tool use / agents:**
 → Refer to `{lang}/claude-api/README.md` + `shared/tool-use-concepts.md` + `{lang}/claude-api/tool-use.md`
