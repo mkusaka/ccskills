@@ -3,7 +3,7 @@ name: "design-sync-package-source-shape"
 description: "Shape-specific /design-sync instructions for syncing a React design system from a built package without Storybook"
 metadata:
   originalName: "Skill: /design-sync package source shape"
-  ccVersion: "2.1.163"
+  ccVersion: "2.1.166"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-design-sync-package-source-shape.md"
   source:
     owner: "Piebald-AI"
@@ -19,7 +19,7 @@ No Storybook — the component list comes from the package's shipped `.d.ts` exp
 ## 2. Explore, then write config (continued)
 
 3. The converter needs the built `dist/` entry + its `.d.ts` tree. Check whether the entry (from `package.json` `module`/`main`/`exports['.']`) already exists — install may have built it via `prepare`. If missing:
-   - Run `<pm> run build`. No `build` script → try `prepare`/`prepack`. In a monorepo, the build may be at the repo root (`turbo build --filter=<pkg>`, `pnpm -F <pkg> build`, `nx build <pkg>`). **Some build scripts fork a watcher and exit 0 early — after the command returns, `ls` the expected output (dist/, build/esm/, or whatever `package.json` `module`/`main` points at) and confirm it's populated before continuing.** If it's empty, check for a `--watch` flag in the script and use the one-shot variant, or poll the output dir.
+   - Run `<pm> run build`. No `build` script → try `prepare`/`prepack`. In a monorepo, build the package *and its workspace dependencies* from the repo root: `turbo build --filter=<pkg>` or `pnpm -F "<pkg>..." build` (the trailing `...` is required — bare `-F <pkg>` skips dependencies and you'll see `Cannot find module '@scope/tokens'`). **Some build scripts fork a watcher and exit 0 early — after the command returns, `ls` the expected output (dist/, build/esm/, or whatever `package.json` `module`/`main` points at) and confirm it's populated before continuing.** If it's empty, check for a `--watch` flag in the script and use the one-shot variant, or poll the output dir.
    - Still missing → `AskUserQuestion`("What command builds this package?", options = any `scripts.*` containing `tsc|tsup|rollup|vite build|esbuild|swc`, plus freeform). Record the answer as `buildCmd` in the config.
    - User says there's no build → the converter will synthesize an entry from `src/` (last resort — `.d.ts` contracts will be weaker; recommend adding a build).
 4. **Check what's already in the project.** `DesignSync(list_files)` on the target. If it returns files, read `_ds_bundle.js` via `DesignSync(get_file)` and note the component names from its first-line `/* @ds-bundle: {…} */` header — but **always still rebuild** (step 7); the existing bundle is stale the moment source changes. The header's `sourceHashes` diff decides what to *upload* incrementally via `DesignSync`, not what to build.
@@ -48,25 +48,22 @@ No Storybook — the component list comes from the package's shipped `.d.ts` exp
    | `libOverrides` | `{"<name>.mjs": "<one-line reason>"}` — declares which `.design-sync/lib/*.mjs` files this repo forks and why (see §Troubleshooting). Cross-checked at build time. |
    | `notes` | path to a markdown notes file — default `"./.design-sync/NOTES.md"`. Read by Claude for repo gotchas and passed through to the uploaded README; the converter itself doesn't read it. |
 
-   **`.design-sync/NOTES.md`** is where repo-specific quirks live (workspace build order, flaky stories, odd entry paths, anything a future re-sync should know). Write it as multi-line markdown — one bullet per gotcha. **Append to it whenever you learn something during the verify loop**, and commit it alongside the config.
+   **`.design-sync/NOTES.md`** is where repo-specific quirks live (workspace build order, flaky stories, odd entry paths, anything a future re-sync should know). Write it as multi-line markdown — one bullet per gotcha. **Append to it whenever the user tells you about an issue or you learn something during the verify loop**, so the next sync picks it up without the user repeating themselves. Commit it alongside the config.
 
-7. **Run the converter.** For large DSes (200+ components) the ts-morph `.d.ts` parse can take several minutes — `[DTS]` progress lines on stderr show it's working.
+7. **Run the converter.** For large DSes (200+ components) the ts-morph `.d.ts` parse can take several minutes — `[DTS]` progress lines on stderr show it's working. Stage scripts into `.ds-sync/` and install converter deps there (isolated from the repo's lockfile/package manager):
 
 ```bash
-# Converter ships under the skill dir — stage the whole set. If `cp` is
-# permission-denied, write via `cat`: `cat "<src>" > ./lib/<name>.mjs`.
-cp -r "<skill-base-dir>"/package-build.mjs "<skill-base-dir>"/package-validate.mjs "<skill-base-dir>"/lib .
-npm i --no-save esbuild ts-morph @types/react   # see the pnpm note below if this repo uses pnpm
-node package-build.mjs --config design-sync.config.json --node-modules ./node_modules \
+mkdir -p .ds-sync && cp -r "<skill-base-dir>"/package-build.mjs "<skill-base-dir>"/package-validate.mjs "<skill-base-dir>"/lib .ds-sync/
+echo '{"name":"ds-sync-deps","private":true}' > .ds-sync/package.json
+(cd .ds-sync && npm i esbuild ts-morph @types/react)
+node .ds-sync/package-build.mjs --config design-sync.config.json --node-modules <pkg-node-modules> \
   --entry ./dist/index.es.js --out ./ds-bundle
-node package-validate.mjs ./ds-bundle
+node .ds-sync/package-validate.mjs ./ds-bundle
 ```
 
-Run `package-build.mjs` and `package-validate.mjs` as separate commands and check each exit code — a chained `build && validate` in the background exits non-zero with no visible log when the build step fails. **In a headless / `-p` session, run both synchronously** (no `run_in_background`) — there is no task-notification re-invocation in headless mode, so a backgrounded run is never resumed. In an interactive session, backgrounding the build is fine.
+Run build and validate as separate commands and check each exit code — a chained `build && validate` in the background exits non-zero with no visible log when the build step fails. **In a headless / `-p` session, run both synchronously** (no `run_in_background`) — there is no task-notification re-invocation in headless mode, so a backgrounded run is never resumed. In an interactive session, backgrounding the build is fine.
 
-In the DS's own repo `node_modules/<pkg>` usually doesn't exist (npm won't self-install), hence `--entry`.
-
-**esbuild/ts-morph on a pnpm repo:** `npm i --no-save esbuild ts-morph` can fail or stay un-hoisted on a pnpm-managed `node_modules` (the converter's imports then won't resolve). If so, install where pnpm can see it (`pnpm add -D esbuild ts-morph @types/react`) or symlink the converter's resolution targets from `$(pnpm root)/.pnpm/`.
+In a monorepo, point `--node-modules` at the DS package's own `node_modules` (where its `react` resolves) — not the repo root. In the DS's own repo `node_modules/<pkg>` usually doesn't exist (npm won't self-install), hence `--entry`.
 
 `@types/react` is required for prop extraction — without it `React.ComponentPropsWithoutRef<…>` and similar utility types resolve to `any` and the emitted `<Name>.d.ts` loses inherited props (converter prints `[DTS_REACT]`).
 
@@ -94,6 +91,7 @@ Per component, under `components/<group>/<Name>/`: `<Name>.jsx` (one-line re-exp
 |---|---|---|
 | `[NO_DIST]` | `entry <path> doesn't exist` | The DS package isn't built. Run its build script (`npm run build` / `turbo run build`), or use the published-dist alternative above. |
 | `[WORKSPACE_SIBLING]` | `Could not resolve "<sibling>"` during bundle | A workspace sibling package isn't built. Build it (`turbo build`), or `npm install` the published versions into a scratch dir. |
+| `[PNPM_SELF_PROVISION]` | `packageManager: pnpm@X` tries to auto-install and fails | Corepack: set `COREPACK_ENABLE_STRICT=0` (use system pnpm). npm's own provisioning: `npm_config_manage_package_manager_versions=false`. Retry. |
 | `[CONFIG]` | `<path>: <json error>` | `design-sync.config.json` is missing or malformed JSON. Fix the syntax. |
 | `[ZERO_MATCH]` | no components discovered | No PascalCase `.d.ts` exports and `componentSrcMap` empty. |
 | `[OUT_UNSAFE]` | `refusing to rm <path>` | `--out` points at `/`, `$HOME`, cwd, or a non-empty dir that isn't a prior bundle. Point `--out` at an empty directory. |
@@ -162,19 +160,17 @@ Only upload after the converter has fully finished and `package-validate.mjs` ex
 
 Upload at the **DS project root** — the self-check expects `_ds_bundle.js`, `styles.css`, `components/`, `tokens/`, `fonts/`, and `README.md` at the top level.
 
-Create an empty `./ds-bundle/_ds_needs_recompile` (e.g. `touch ds-bundle/_ds_needs_recompile`).
-
 `DesignSync(finalize_plan)` with `localDir: "./ds-bundle"`, `writes: ["components/**", "tokens/**", "fonts/**", "_vendor/**", "_preview/**", "guidelines/**", "_ds_bundle.js", "_ds_bundle.css", "styles.css", "README.md", "_ds_needs_recompile"]` (the converter's output set plus the recompile sentinel), and `deletes: []` (required, even when empty). Dot-prefixed root entries (`.ds-build-meta.json`, `.ds-bundle`, `.pkg-entry.mjs`, `.bundle-entry.mjs`, `.sb-static/`) and `_screenshots/` are build artifacts and stay local. `_vendor/` does upload (the preview cards load React from it). Add `"demo.html"` only when `cfg.demo` is set.
 
 `finalize_plan` shows the user an interactive approval prompt. **If it's denied, stop** — don't retry with different `localDir`/`writes` values; denial means the session can't approve, not that the arguments were wrong. The bundle is already validated at §4; report the `ds-bundle/` path and let the user run the upload interactively.
 
-As the **first** write after plan approval, `DesignSync(write_files, [{path: "_ds_needs_recompile", localPath: "_ds_needs_recompile"}])` — this fences the app's manifest/copy machinery while the upload is in progress, so consumers never see a half-uploaded state. Then `DesignSync(write_files)` for every other file matching the plan, preserving the root-relative paths verbatim. The tool caps at 256 files per call, so list the tree, chunk into ≤256-file batches, and issue multiple `write_files` calls under the same `planId`. After all other uploads complete, write the sentinel again — `DesignSync(write_files, [{path: "_ds_needs_recompile", localPath: "_ds_needs_recompile"}])` — to re-arm the recompile in case the project was opened mid-sync. `DesignSync(list_files)` to confirm the count matches. Each `<Name>.html` carries a first-line `<!-- @dsCard group="…" -->` comment that the claude.ai/design app's self-check reads to register the cards.
+As the **first** write after plan approval, `DesignSync(write_files, [{path: "_ds_needs_recompile", localPath: "_ds_needs_recompile"}])` — the converter writes this file (`{"by":"design-sync-cli"}`); uploading it first fences the app's manifest/copy machinery while the upload is in progress, so consumers never see a half-uploaded state. Then `DesignSync(write_files)` for every other file matching the plan, preserving the root-relative paths verbatim. The tool caps at 256 files per call, so list the tree, chunk into ≤256-file batches, and issue multiple `write_files` calls under the same `planId`. After all other uploads complete, write the sentinel again — `DesignSync(write_files, [{path: "_ds_needs_recompile", localPath: "_ds_needs_recompile"}])` — to re-arm the recompile in case the project was opened mid-sync. `DesignSync(list_files)` to confirm the count matches. Each `<Name>.html` carries a first-line `<!-- @dsCard group="…" -->` comment that the claude.ai/design app's self-check reads to register the cards.
 
 When done, tell the user: the project URL (`https://claude.ai/design/p/<projectId>`), the component count, files uploaded, and that `package-validate.mjs` exited clean. **Commit `design-sync.config.json`, `.design-sync/NOTES.md`, and any `.design-sync/lib/` overrides to the repo** so future runs reuse the `previewArgs`/`dtsPropsFor`/`libOverrides` and notes you added during the verify loop.
 
 ## 6. Self-check (server-side)
 
-You're done after the upload. The app's self-check fires on project open (the `_ds_needs_recompile` sentinel you wrote triggers it), so the DS pane populates within a few seconds. The self-check reads each `<Name>.d.ts` as the component's API contract (the `<Name>Props` interface is what the design agent sees), reads the `@dsCard` line from each `<Name>.html` to register preview cards, regenerates the adherence config and `ds_manifest` from the uploaded source, and clears the sentinel.
+You're done after the upload. The app's self-check fires on project open (the `_ds_needs_recompile` sentinel you wrote triggers it), so the DS pane populates within a few seconds. The self-check reads each `<Name>.d.ts` as the component's API contract (the `<Name>Props` interface is what the design agent sees), reads the `@dsCard` line from each `<Name>.html` to register preview cards, regenerates the adherence config and `ds_manifest` from the uploaded source (stamping `source` from the sentinel's `by` value), and clears the sentinel.
 
 ## How it works
 
