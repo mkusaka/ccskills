@@ -3,7 +3,7 @@ name: "verify-skill"
 description: "Skill for opinionated verification workflow for validating code changes."
 metadata:
   originalName: "Skill: Verify skill"
-  ccVersion: "2.1.143"
+  ccVersion: "2.1.166"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-verify-skill.md"
   source:
     owner: "Piebald-AI"
@@ -203,14 +203,14 @@ typecheck don't belong here — they're CI's output.
 
 1. ✅/❌/⚠️/🔍 <what you did to the running app> → <what you observed>
    <evidence: the app's own output — pane capture, response body,
-   screenshot path>
+   screenshot>
 
 🔍 marks a probe — a step off the claim's happy path, trying to
 break it. At least one. A Steps list that's all ✅ and no 🔍 is a
 happy-path replay: still PASS, but you stopped at the first half.
 
 **Screenshot / sample:** <the one frame a reviewer looks at to see
-the feature — image path for GUI/TUI, code block for library/API;
+the feature — an image for GUI/TUI, code block for library/API;
 omit for build/types-only>
 
 ### Findings
@@ -232,6 +232,15 @@ Lead with ⚠️ for lines worth interrupting the reviewer for; plain
 bullets are context. Empty is fine if nothing stuck out — but nothing
 sticking out is itself rare.>
 ```
+
+**Evidence has to reach the reader.** A file path is only evidence
+if the person reading the report can open it. If the `SendUserFile`
+tool is in your toolset, you're on a remote surface where they
+can't — send the screenshots and recordings with it and let the
+report name what you sent. Without it, reference the path and keep
+the evidence that matters inline — pane captures and response
+bodies travel in the report; a bare path only works when the reader
+shares your filesystem.
 
 **Verdicts:**
 - **PASS** — you ran the app, the change did what it should at its
