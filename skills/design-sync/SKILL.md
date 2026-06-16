@@ -1,9 +1,9 @@
 ---
 name: "design-sync"
-description: "Skill for syncing a React design system to claude.ai/design by building, verifying, and uploading real component artifacts"
+description: "Skill for syncing a React design system to claude.ai/design by configuring the target project, running the converter, verifying previews, and uploading verified artifacts"
 metadata:
   originalName: "Skill: Design sync"
-  ccVersion: "2.1.174"
+  ccVersion: "2.1.178"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-design-sync.md"
   source:
     owner: "Piebald-AI"
@@ -38,7 +38,7 @@ This is why fidelity is the whole game: a component that renders wrong here rend
 
 The converter builds all of the above deterministically from the repo's own `dist/`. With a Storybook, previews come from the repo's stories and are verified against its own storybook render (kept as a local reference, never uploaded). Without one, every component still ships fully functional, and rich previews are authored from the repo's own usage examples for the components the user scopes in, graded on an absolute rubric. **Core principle: ship what the customer already built** — the bundle is their compiled `dist/`, never a reimplementation.
 
-You have a `DesignSync` tool that reads and writes the user's claude.ai/design projects.
+You have a `DesignSync` tool that reads and writes the user's claude.ai/design projects. If a tool call fails with an authorization error, relay its guidance to the user — typically running `/design-login` (sessions without a claude.ai login, e.g. API-key or enterprise token-wrapper auth) or `/login` with a Claude subscription — and retry after they've done so.
 
 ## 0. First sync? Set expectations before any work
 
