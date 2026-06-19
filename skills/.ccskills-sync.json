@@ -3,6 +3,7 @@
   "selection": "builtin-skills",
   "skills": [
     "agent-design-patterns",
+    "artifact-design",
     "build-with-claude-api-reference-guide",
     "building-llm-powered-applications-with-claude",
     "claude-code-configuration-guide",
@@ -34,6 +35,7 @@
     "loop-self-pacing-mode",
     "loop-slash-command",
     "loop-slash-command-dynamic-mode",
+    "migrate-to-claude-code",
     "model-migration-guide",
     "run-app",
     "run-browser-driven-web-app-example",

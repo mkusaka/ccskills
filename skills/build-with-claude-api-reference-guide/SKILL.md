@@ -3,7 +3,7 @@ name: "build-with-claude-api-reference-guide"
 description: "Template for presenting language-specific reference documentation with quick task navigation"
 metadata:
   originalName: "Skill: Build with Claude API (reference guide)"
-  ccVersion: "2.1.163"
+  ccVersion: "2.1.182"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-build-with-claude-api-reference-guide.md"
   source:
     owner: "Piebald-AI"
@@ -17,6 +17,8 @@ metadata:
 The relevant documentation for your detected language is included below in `<doc>` tags. Each tag has a `path` attribute showing its original file path. Use this to find the right section:
 
 ### Quick Task Reference
+
+> All SDK languages use the same per-language `claude-api/` directory layout (cURL: `curl/examples.md`). Not every language has every file — if a file is absent, that feature's example is not yet documented for that language; fall back to the cURL shape or WebFetch the SDK repo.
 
 **Single text classification/summarization/extraction/Q&A:**
 → Refer to `{lang}/claude-api/README.md`
@@ -52,7 +54,7 @@ The relevant documentation for your detected language is included below in `<doc
 → Refer to `shared/anthropic-cli.md`
 
 **Managed Agents (server-managed stateful agents):**
-→ Refer to `shared/managed-agents-overview.md` and the rest of the `shared/managed-agents-*.md` files. For Python, TypeScript, and cURL, language-specific code examples live in `{lang}/managed-agents/README.md`. Java, Go, Ruby, and PHP also support the API — translate the calls using your SDK's patterns from `{lang}/claude-api.md`. C# does not currently have Managed Agents support; use raw HTTP from `curl/managed-agents.md` as a reference.
+→ Refer to `shared/managed-agents-overview.md` and the rest of the `shared/managed-agents-*.md` files. For Python, TypeScript, Go, Ruby, PHP, and Java, read the `managed-agents/README.md` in the language folder for code examples. For cURL, read `curl/managed-agents.md`. C# has beta Managed Agents support — use `curl/managed-agents.md` as the wire-level reference (the C# SDK mirrors it via `client.Beta.Agents`; see `csharp/claude-api/README.md`).
 
 **Error handling:**
 → Refer to `shared/error-codes.md`
