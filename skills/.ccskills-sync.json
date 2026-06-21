@@ -35,7 +35,6 @@
     "loop-self-pacing-mode",
     "loop-slash-command",
     "loop-slash-command-dynamic-mode",
-    "migrate-to-claude-code",
     "model-migration-guide",
     "run-app",
     "run-browser-driven-web-app-example",
