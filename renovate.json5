@@ -1,4 +1,6 @@
 {
+  automerge: true,
+  platformAutomerge: false,
   minimumReleaseAge: "7 days",
   $schema: "https://docs.renovatebot.com/renovate-schema.json",
   extends: ["config:best-practices", "group:definitelyTyped"],
