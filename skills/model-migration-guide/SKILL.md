@@ -3,7 +3,7 @@ name: "model-migration-guide"
 description: "Step-by-step instructions for migrating existing code to newer Claude models, covering breaking changes, deprecated parameters, per-SDK syntax, prompt-behavior shifts, and migration checklists"
 metadata:
   originalName: "Skill: Model migration guide"
-  ccVersion: "2.1.186"
+  ccVersion: "2.1.193"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-model-migration-guide.md"
   source:
     owner: "Piebald-AI"
@@ -83,7 +83,7 @@ Not every file that contains the old model ID is a **caller** of the API. Before
 | 1 | **Calls the API/SDK** | `client.messages.create(model=…)`, `anthropic.Anthropic()`, request payloads | Swap the model ID **and** apply the breaking-change checklist for the target version (below). |
 | 2 | **Defines or serves the model** | Model registries, OpenAPI specs, routing/queue configs, model-policy enums, generated catalogs | The old entry **stays** (the model is still served). Ask whether to (a) add the new model alongside, (b) leave alone, or (c) retire the old model — never blind-replace. **If you can't ask, default to (a): add the new model alongside and flag it** — replacing would de-register a model that's still in production. |
 | 3 | **References the ID as an opaque string** | UI fallback constants, capability-gate substring checks, generic test fixtures, label parsers, env defaults | Usually swap the string and verify any parser/regex/substring match handles the new ID — but check the sub-cases below first. |
-| 4 | **Suffixed variant ID** | `claude-<model>-<suffix>` like `-fast`, `-1024k`, `-200k`, `[1m]`, dated snapshots | These are deployment/routing identifiers, not the public model ID. **Do not assume a new-model equivalent exists.** Verify in the registry first; if absent, leave the string alone and flag it. |
+| 4 | **Suffixed variant ID** | `claude-<model>-<suffix>` like `-fast`, `-1024k`, `-200k`, `[1m]`, dated snapshots | These are deployment/routing identifiers, not the public model ID. **Do not assume a new-model equivalent exists.** Verify in the registry first; if absent, leave the string alone and flag it. For `-fast` strings (e.g. `claude-opus-4-6-fast`), see the Fast Mode section below. |
 
 **Bucket 3 sub-cases — before swapping a string reference, check:**
 
@@ -695,18 +695,19 @@ Beyond resolution, Opus 4.7 also improves on low-level perception (pointing, mea
 
 Requests that involve prohibited or high-risk topics may lead to refusals.
 
-### Fast Mode: not available on Opus 4.7
+### Fast Mode: Opus 4.8 / 4.7 / 4.6
 
-Opus 4.7 does not have a Fast Mode variant. **Opus 4.6 Fast remains supported**. Only surface this if the caller's code actually uses a Fast Mode model string (e.g. `claude-opus-4-6-fast`); if the word "fast" does not appear in the code, say nothing about Fast Mode.
+Fast mode is available on Opus 4.8, Opus 4.7, and Opus 4.6. **Both Opus 4.6 and Opus 4.7 fast mode are deprecated** — after removal, requesting fast mode on Opus 4.6 silently falls back to standard speed, while on Opus 4.7 it returns an error. Opus 4.8 is the durable fast-capable tier. Only surface this if the caller's code actually uses fast mode (e.g. `model="claude-opus-4-6-fast"`, or `speed="fast"` on Opus 4.6/4.7); if the word "fast" does not appear in the code, say nothing about Fast Mode.
 
-When you see `model="claude-opus-4-6-fast"` (or similar), **the migration edit is**:
+When you see `model="claude-opus-4-6-fast"` (or similar), **leave the model string unchanged** — Opus 4.6 fast mode still works today — and add a comment flagging the deprecation:
 
 ```python
-# Opus 4.7 has no Fast Mode — keeping on 4.6 Fast (caller's choice to switch to standard Opus 4.7).
+# Opus 4.6 fast mode is deprecated. The durable upgrade is Opus 4.8 with
+# speed="fast" + the fast-mode-2026-02-01 beta (caller's call when to switch).
 model="claude-opus-4-6-fast",
 ```
 
-That is: leave the model string **unchanged**, add the comment above it, and tell the user their two options — (a) stay on Opus 4.6 Fast, which remains supported, or (b) move latency-tolerant traffic to standard Opus 4.7 for the intelligence gain. Do **not** rewrite the model string to `claude-opus-4-7` yourself; that silently trades latency for intelligence, which is the caller's decision.
+Tell the user their two options: (a) stay on Opus 4.6 fast for now (still supported), or (b) move to Opus 4.8 with `speed="fast"` and the `fast-mode-2026-02-01` beta via `client.beta.messages.…` (per-language form in SKILL.md § Fast Mode), which is the durable target. Do **not** rewrite the model string yourself — switching tiers trades behavior the caller may be relying on, so it is their decision. Do **not** land on Opus 4.7 fast either: it is also deprecated (fast mode removed by default around Jul 25, 2026).
 
 ### Behavioral shifts (prompt-tunable)
 
