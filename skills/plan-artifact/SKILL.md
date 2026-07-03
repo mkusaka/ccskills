@@ -3,7 +3,7 @@ name: "plan-artifact"
 description: "Skill instructions for creating or customizing shareable plan artifacts from implementation plans, design docs, or RFCs"
 metadata:
   originalName: "Skill: Plan Artifact"
-  ccVersion: "2.1.198"
+  ccVersion: "2.1.199"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-plan-artifact.md"
   source:
     owner: "Piebald-AI"
@@ -29,7 +29,7 @@ Always start from the template. Never write the HTML shell from scratch — the 
 
 2. **Edit the copy — content only.**
    - Delete the leading HTML comment header.
-   - Fill `{{TITLE}}` (both occurrences) with the plan's title, `{{EYEBROW}}` with a short context label such as `Plan · <project name>`, and `{{SUMMARY}}` with a one-sentence lede.
+   - Fill `{{TITLE}}` and `{{TAB_TITLE}}` with the plan's title, `{{EYEBROW}}` with a short context label such as `Plan · <project name>`, and `{{SUMMARY}}` with a one-sentence lede.
    - Replace each `<!-- SLOT: … -->` comment with that section's content as HTML. Convert the plan's markdown; the `<h2>` headings are already provided. Add or remove whole `<section>` blocks so the document matches the plan's actual structure — the four starter sections are a suggestion, not a requirement.
    - Keep the `<style>` block intact, including the dark-mode token set — every plan artifact carries both themes. Extend or restyle only when the user explicitly asks for a different look, and keep their changes additive where possible.
 

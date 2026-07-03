@@ -53,6 +53,8 @@
     "run-web-server-api-example",
     "schedule-recurring-cron-and-execute-immediately-compact",
     "schedule-recurring-cron-and-run-immediately",
+    "setup-cowork",
+    "setup-cowork-role-selection",
     "stuck-background-daemon-diagnostics",
     "stuck-slash-command",
     "team-onboarding-guide",
