@@ -3,7 +3,7 @@ name: "auto-mode-setup"
 description: "Guided setup and customization workflow for auto mode environment context, optional rule carve-outs, and settings updates"
 metadata:
   originalName: "Skill: Auto mode setup"
-  ccVersion: "2.1.198"
+  ccVersion: "2.1.200"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-auto-mode-setup.md"
   source:
     owner: "Piebald-AI"
@@ -13,7 +13,7 @@ metadata:
   variables:
     - "SUBSCRIPTION_POSTURE_HINT"
     - "AGENT_TOOL_NAME"
-    - "AUTO_MODE_ENVIRONMENT_DEFAULTS"
+    - "AUTO_MODE_ENVIRONMENT_DEFAULTS_FN"
 ---
 
 # Auto Mode Setup & Customisation
@@ -424,7 +424,7 @@ Sensitivity (filling these in sharpens the default heuristic):
 ### User-specific
 
 - **Primary use of Claude Code** — e.g. software development, ML research, infra automation
-- **Trusted repo** — this user's checkouts and their remotes
+- **Trusted repo** — this user's checkouts and their configured remotes; when the repo's public/private visibility is given, it scopes what is OK to commit or push there
 - **Org-specific CLIs** — internal command-line tools this user actually invokes; note any subcommands that can delete or launch resources
 - Any "routine under <user>/ prefix" qualifiers that apply to this user specifically
 
@@ -548,7 +548,7 @@ comes from policy settings instead):
       "...",
       "### User-specific",
       "**Primary use of Claude Code**: backend development",
-      "**Trusted repo**: github.com/acme/widgets and its remotes",
+      "**Trusted repo**: github.com/acme/widgets (private — OK for the team's own work)",
       "..."
     ]
   }
@@ -561,7 +561,7 @@ or left empty, write that slot's shipped default verbatim from this list
 the **Sensitive data locations & audiences** slot — never write that
 slot's default alongside them):
 
-${AUTO_MODE_ENVIRONMENT_DEFAULTS()}
+${AUTO_MODE_ENVIRONMENT_DEFAULTS_FN()}
 
 After the structured slots, append any freeform bullets from Phase 3 — the
 environment section is read as prose by the classifier, so anything that

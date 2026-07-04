@@ -3,7 +3,7 @@ name: "verify-skill"
 description: "Skill for opinionated verification workflow for validating code changes."
 metadata:
   originalName: "Skill: Verify skill"
-  ccVersion: "2.1.198"
+  ccVersion: "2.1.200"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-verify-skill.md"
   source:
     owner: "Piebald-AI"
@@ -14,7 +14,7 @@ metadata:
 
 ---
 name: verify
-description: Verify that a code change actually does what it's supposed to by exercising it end-to-end and observing behavior — drive the affected flow, not just tests or typecheck. Run before committing nontrivial changes. Don't invoke it on a diff that only touches tests, docs, or other code with no runtime surface to drive (a change to product source always has one) — there's nothing to observe.
+description: Verify that a code change actually does what it's supposed to by exercising it end-to-end and observing behavior — drive the affected flow, not just tests or typecheck. Run before committing nontrivial changes; bootstraps this repo's project verify skill if none exists yet. Don't invoke it on a diff that only touches tests, docs, or other code with no runtime surface to drive (a change to product source always has one) — there's nothing to observe.
 ---
 
 **Verification is runtime observation.** You build the app, run it,
@@ -110,8 +110,15 @@ ls <touched-dir>/.claude/skills/      # each dir level the diff names
   primitives as your handle.
 - **Neither** → cold start from README/package.json/Makefile. Timebox
   ~15min. Stuck → BLOCKED with exactly where, plus a filled-in
-  `/run-skill-generator` prompt. Got through → note the working
-  build/launch recipe so it can become a `verifier-*` skill.
+  `/run-skill-generator` prompt. Got through → **persist what you
+  learned**: create `.claude/skills/verify/SKILL.md` at the level you
+  probed above — repo root for a single-package repo; the touched
+  package/app dir (`apps/desktop/.claude/skills/verify/SKILL.md`) in
+  a monorepo where verification is per-package — capturing the
+  build/launch/drive recipe that worked, so the next session skips
+  this cold start. Keep it short: the commands that worked, the
+  flows worth driving, any gotchas. A project verify skill already
+  exists → fold new learnings into it instead of duplicating.
 
 ## Drive it
 
