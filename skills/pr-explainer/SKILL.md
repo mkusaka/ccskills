@@ -3,7 +3,7 @@ name: "pr-explainer"
 description: "Generates a shareable pull request walkthrough artifact covering what changed, why, and where reviewers should focus"
 metadata:
   originalName: "Skill: PR explainer"
-  ccVersion: "2.1.198"
+  ccVersion: "2.1.202"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-pr-explainer.md"
   source:
     owner: "Piebald-AI"
@@ -30,6 +30,19 @@ Produce a **shareable PR walkthrough artifact** — a self-contained HTML page a
 reviewer can read before opening the diff to understand what this change does,
 why it's being made, and where to focus attention. Pitch the writing at a
 reviewer seeing this PR for the first time.
+
+Wherever the answers end up in the sections below, the page must answer all
+five of these questions:
+
+1. What is the problem this PR is trying to solve?
+2. Why is it a problem?
+3. How are we solving it?
+4. What alternatives did we consider?
+5. Why is the current approach better than the alternatives?
+
+If the diff, PR body, and commit messages give no evidence for one of these —
+most often 4 and 5 — say that plainly (e.g. "the PR doesn't record what
+alternatives were considered") instead of inventing an answer.
 
 ## Structure of the artifact
 
