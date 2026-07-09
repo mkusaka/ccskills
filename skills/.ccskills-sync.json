@@ -29,6 +29,8 @@
     "design-sync",
     "design-sync-package-source-shape",
     "design-sync-storybook-source-shape",
+    "doctor-slash-command",
+    "doctor-slash-command-description",
     "dynamic-pacing-loop-execution",
     "generate-permission-allowlist-from-transcripts",
     "init-claudemd-and-skill-setup-new-version",

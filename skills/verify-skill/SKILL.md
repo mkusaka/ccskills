@@ -3,7 +3,7 @@ name: "verify-skill"
 description: "Skill for opinionated verification workflow for validating code changes."
 metadata:
   originalName: "Skill: Verify skill"
-  ccVersion: "2.1.200"
+  ccVersion: "2.1.205"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-verify-skill.md"
   source:
     owner: "Piebald-AI"
@@ -118,7 +118,10 @@ ls <touched-dir>/.claude/skills/      # each dir level the diff names
   build/launch/drive recipe that worked, so the next session skips
   this cold start. Keep it short: the commands that worked, the
   flows worth driving, any gotchas. A project verify skill already
-  exists → fold new learnings into it instead of duplicating.
+  exists → edit it only when it steered you wrong: a documented
+  command failed or turned out wrong, or a needed step it doesn't
+  cover. Routine learnings don't warrant an edit, and never rewrite
+  or reorganize existing content for style.
 
 ## Drive it
 
