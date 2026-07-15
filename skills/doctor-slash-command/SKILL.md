@@ -1,9 +1,9 @@
 ---
 name: "doctor-slash-command"
-description: "Diagnostic workflow for auditing and fixing Claude Code installation health, unused context, local and checked-in memory files, hooks, version currency, and permission prompts"
+description: "Diagnostic workflow for auditing and fixing Claude Code installation health, unused context, local memory duplication, hooks, version currency, and permission prompts"
 metadata:
   originalName: "Skill: /doctor slash command"
-  ccVersion: "2.1.206"
+  ccVersion: "2.1.210"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-doctor-slash-command.md"
   source:
     owner: "Piebald-AI"
@@ -125,7 +125,7 @@ Auto mode ("auto") delegates per-action permission decisions to a safety classif
 - The setting is `permissions.defaultMode`; valid modes are `acceptEdits`, `auto`, `bypassPermissions`, `default`, `dontAsk`, `plan` (`manual` is an accepted alias for `default`).
 - Healthy (one line, no proposal) when user-scope or managed-policy settings already set `"defaultMode": "auto"` and no project/local `defaultMode` shadows it (next bullet).
 - Scope caveat: only the VALUE `"auto"` is source-restricted — a project or local `permissions.defaultMode` set to any OTHER mode (`plan`, `acceptEdits`, `default`, …) is honored and, in the settings cascade (user < project < local), overrides the user-scope `"auto"`. If this project's `.claude/settings.json` or `.claude/settings.local.json` sets a `defaultMode`, either skip with one line ("this project pins its own default mode, so a user-scope default wouldn't take effect here") or state in the proposal that the user-scope default is overridden in any project whose settings set a `defaultMode`.
-- Skip gracefully (one line explaining why, no proposal) when: managed policy sets any `defaultMode` (policy wins over user settings); `permissions.disableAutoMode: "disable"` (or a top-level `disableAutoMode`) appears in any settings scope — auto mode is deliberately turned off; or the session runs on a 3P provider (Bedrock/Vertex/Foundry) without `CLAUDE_CODE_ENABLE_AUTO_MODE` set, where auto mode is unsupported.
+- Skip gracefully (one line explaining why, no proposal) when: managed policy sets any `defaultMode` (policy wins over user settings); or `permissions.disableAutoMode: "disable"` (or a top-level `disableAutoMode`) appears in any settings scope — auto mode is deliberately turned off. The provider is NOT a skip reason: auto mode is provider-supported on every provider, 3P (Bedrock/Vertex/Foundry) included. Per-model availability (not every model supports auto mode; the CLI keeps a per-model list) is enforced by the CLI at startup and when switching providers or modes, not here — the fallback-with-notice in the proposal below already covers it.
 - Otherwise propose adding `"permissions": {"defaultMode": "auto"}` to `~/.claude/settings.json`. It MUST go in the user file: an `"auto"` defaultMode in project `.claude/settings.json` or `.claude/settings.local.json` is ignored as repo-controllable — only policy, user, and CLI-flag sources may grant auto mode. State in the proposal that this default applies to every project, and that it cannot lock the user out: if auto mode turns out to be unavailable at startup (unsupported model, org-side kill switch), the CLI falls back to default mode with a notice.
 
 ## Check 9 — pre-approve frequently denied read-only commands
