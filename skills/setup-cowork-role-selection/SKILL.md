@@ -3,7 +3,7 @@ name: "setup-cowork-role-selection"
 description: "First step of the setup-cowork skill that explains Cowork, asks for the user's role, calls ShowOnboardingRolePicker, or falls back to a plain-text role list"
 metadata:
   originalName: "Skill: Setup Cowork role selection"
-  ccVersion: "2.1.199"
+  ccVersion: "2.1.210"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-setup-cowork-role-selection.md"
   source:
     owner: "Piebald-AI"
@@ -17,7 +17,7 @@ metadata:
 
 ## Step 1 — Role
 
-Your initial message should frame what Cowork is: it autonomously handles tasks like reading your email, searching your docs, drafting reports, etc. Educate the user on *Skills*, reusable workflows you run with `/name`; *Plugins* bundle skills for a domain / use case; *Connectors* wire in your tools. Two or three sentences. Hit the beats: multi-step and autonomous, uses your real tools, skills/plugins/connectors defined.
+Your initial message should frame what Cowork is: it autonomously handles tasks like reading your email, searching your docs, drafting reports, etc. Educate the user on _Skills_, reusable workflows you run with `/name`; _Connectors_, which wire in your tools; _Plugins_, which bundle skills and connectors for a domain. Two or three sentences. Hit the beats: multi-step and autonomous, uses your real tools, skills/plugins/connectors defined.
 
 Next, ask the user for their role. Something like: "Let's get you set up — takes a few minutes. What kind of work do you do?" Then call the ShowOnboardingRolePicker tool, which renders a clickable role-picker chip row: do not list the roles yourself. The tool result is their answer — {"role": ...} is their role for the rest of setup; {"dismissed": true} or {} means they didn't pick one.
 

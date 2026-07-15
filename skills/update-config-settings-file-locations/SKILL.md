@@ -3,7 +3,7 @@ name: "update-config-settings-file-locations"
 description: "Where Claude Code stores settings.json across scopes"
 metadata:
   originalName: "Skill: Update config settings file locations"
-  ccVersion: "2.1.173"
+  ccVersion: "2.1.210"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-update-config-settings-file-locations.md"
   source:
     owner: "Piebald-AI"
@@ -32,7 +32,7 @@ Settings load in order: user → project → local (later overrides earlier).
   "permissions": {
     "allow": ["Bash(npm *)", "Edit(.claude)", "Read"],
     "deny": ["Bash(rm -rf *)"],
-    "ask": ["Write(/etc/*)"],
+    "ask": ["Edit(//etc/*)"],
     "defaultMode": "default" | "plan" | "acceptEdits" | "dontAsk",
     "additionalDirectories": ["/extra/dir"]
   }
