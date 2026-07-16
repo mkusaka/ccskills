@@ -62,7 +62,6 @@
     "run-skill-template",
     "run-tui-interactive-terminal-app-example",
     "run-web-server-api-example",
-    "schedule-recurring-cron-and-execute-immediately-compact",
     "schedule-recurring-cron-and-run-immediately",
     "setup-cowork",
     "setup-cowork-role-selection",
