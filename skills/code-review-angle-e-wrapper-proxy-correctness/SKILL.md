@@ -1,15 +1,15 @@
 ---
-name: "code-review-angle-e-wrapperproxy-correctness"
+name: "code-review-angle-e-wrapper-proxy-correctness"
 description: "Code-review finder angle for wrapping types (caches, proxies, decorators), checking every method forwards faithfully to the wrapped object"
 metadata:
   originalName: "Skill: Code Review (Angle E — wrapper/proxy correctness)"
   ccVersion: "2.1.173"
-  sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-code-review-angle-e-wrapperproxy-correctness.md"
+  sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-code-review-angle-e-wrapper-proxy-correctness.md"
   source:
     owner: "Piebald-AI"
     repo: "claude-code-system-prompts"
     ref: "main"
-    path: "system-prompts/skill-code-review-angle-e-wrapperproxy-correctness.md"
+    path: "system-prompts/skill-code-review-angle-e-wrapper-proxy-correctness.md"
 ---
 
 ### Angle E — wrapper/proxy correctness

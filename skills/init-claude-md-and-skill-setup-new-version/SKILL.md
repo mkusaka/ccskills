@@ -1,15 +1,15 @@
 ---
-name: "init-claudemd-and-skill-setup-new-version"
+name: "init-claude-md-and-skill-setup-new-version"
 description: "A comprehensive onboarding flow for setting up CLAUDE.md and related skills/hooks in the current repository, including codebase exploration, user interviews, and iterative proposal refinement"
 metadata:
   originalName: "Skill: /init CLAUDE.md and skill setup (new version)"
   ccVersion: "2.1.213"
-  sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-init-claudemd-and-skill-setup-new-version.md"
+  sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-init-claude-md-and-skill-setup-new-version.md"
   source:
     owner: "Piebald-AI"
     repo: "claude-code-system-prompts"
     ref: "main"
-    path: "system-prompts/skill-init-claudemd-and-skill-setup-new-version.md"
+    path: "system-prompts/skill-init-claude-md-and-skill-setup-new-version.md"
   variables:
     - "IS_IMPORT_ENABLED_FN"
     - "IMPORT_OFFER_NOTE"
