@@ -1,15 +1,15 @@
 ---
-name: "verify-serverapi-changes-example-for-verify-skill"
+name: "verify-server-api-changes-example-for-verify-skill"
 description: "Example workflow for verifying a server/API change, as part of the Verify skill."
 metadata:
   originalName: "Skill: Verify server/API changes (example for Verify skill)"
   ccVersion: "2.1.83"
-  sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-verify-serverapi-changes-example-for-verify-skill.md"
+  sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-verify-server-api-changes-example-for-verify-skill.md"
   source:
     owner: "Piebald-AI"
     repo: "claude-code-system-prompts"
     ref: "main"
-    path: "system-prompts/skill-verify-serverapi-changes-example-for-verify-skill.md"
+    path: "system-prompts/skill-verify-server-api-changes-example-for-verify-skill.md"
 ---
 
 # Verifying a server/API change

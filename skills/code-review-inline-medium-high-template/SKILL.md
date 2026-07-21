@@ -1,15 +1,15 @@
 ---
-name: "code-review-inline-mediumhigh-template"
+name: "code-review-inline-medium-high-template"
 description: "Template for medium and high inline code-review prompts that run eight finder angles, deduplicate without verification, and enforce a minimum findings target"
 metadata:
   originalName: "Skill: Code Review inline medium/high template"
   ccVersion: "2.1.206"
-  sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-code-review-inline-mediumhigh-template.md"
+  sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-code-review-inline-medium-high-template.md"
   source:
     owner: "Piebald-AI"
     repo: "claude-code-system-prompts"
     ref: "main"
-    path: "system-prompts/skill-code-review-inline-mediumhigh-template.md"
+    path: "system-prompts/skill-code-review-inline-medium-high-template.md"
   variables:
     - "REVIEW_EFFORT_SUMMARY"
     - "REVIEW_EFFORT_INTRO"
