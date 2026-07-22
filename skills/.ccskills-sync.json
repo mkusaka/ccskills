@@ -42,6 +42,7 @@
     "doctor-slash-command",
     "doctor-slash-command-description",
     "dynamic-pacing-loop-execution",
+    "explain-usage-slash-command",
     "generate-permission-allowlist-from-transcripts",
     "import-to-claude-code",
     "init-claude-md-and-skill-setup-new-version",
