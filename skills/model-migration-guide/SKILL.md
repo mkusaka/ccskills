@@ -3,7 +3,7 @@ name: "model-migration-guide"
 description: "Step-by-step instructions for migrating existing code to newer Claude models, covering breaking changes, deprecated parameters, per-SDK syntax, prompt-behavior shifts, and migration checklists"
 metadata:
   originalName: "Skill: Model migration guide"
-  ccVersion: "2.1.219"
+  ccVersion: "2.1.221"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-model-migration-guide.md"
   source:
     owner: "Piebald-AI"
@@ -469,7 +469,7 @@ Haiku 4.5 has its own rate-limit pool separate from Haiku 3 / 3.5. If you're ram
 
 ## Prompt-Behavior Changes (Opus 4.5 / 4.6, Sonnet 4.6)
 
-These don't break your code, but prompts that worked on 4.5-and-earlier may over- or under-trigger on 4.6. Tune as needed.
+These don't break your code, but prompts that worked on 4.5-and-earlier may over- or under-trigger on 4.6. Tune as needed. For a standing, model-general audit of dated prompt text beyond this migration — skills and tool descriptions included — read `shared/prompt-audit.md` (or invoke `/claude-api prompt-audit`).
 
 **1. Aggressive instructions cause overtriggering.** Opus 4.5 and 4.6 follow the system prompt much more closely than earlier models. Prompts written to *overcome* the old reluctance are now too aggressive:
 
