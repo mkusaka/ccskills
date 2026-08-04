@@ -6,15 +6,14 @@
     "artifact-dashboard",
     "artifact-data-table",
     "artifact-design",
+    "artifact-diagramming",
     "artifact-explainer",
     "artifact-pr-review",
     "artifact-pr-review-composed-publish-flow",
     "artifact-pr-review-description",
     "artifact-pr-review-description-composed-publish-flow",
     "artifact-report",
-    "artifact-whiteboard",
     "artifact-whiteboard-when-to-use-guidance",
-    "artifact-workshop",
     "build-with-claude-api-reference-guide",
     "building-llm-powered-applications-with-claude",
     "claude-code-configuration-guide",
@@ -61,6 +60,9 @@
     "plugin-eval-authoring-interview",
     "pr-explainer",
     "pr-explainer-artifact-template-mode",
+    "prompt-audit",
+    "prototype",
+    "prototype-runtime-capabilities-guidance",
     "run-app",
     "run-browser-driven-web-app-example",
     "run-cli-tool-example",
@@ -82,6 +84,7 @@
     "update-config-settings-file-locations",
     "verify-cli-changes-example-for-verify-skill",
     "verify-server-api-changes-example-for-verify-skill",
-    "verify-skill"
+    "verify-skill",
+    "whiteboard"
   ]
 }
