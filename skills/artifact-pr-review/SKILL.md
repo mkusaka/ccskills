@@ -1,9 +1,9 @@
 ---
 name: "artifact-pr-review"
-description: "Skill instructions for gathering a GitHub pull request, authoring a structured review briefing, filling the bundled HTML template, and publishing it as a shareable Artifact"
+description: "Skill instructions for gathering a GitHub pull request, authoring a structured review briefing, optionally wiring a live staleness signal, filling the bundled HTML template, and publishing it as an Artifact"
 metadata:
   originalName: "Skill: Artifact PR review"
-  ccVersion: "2.1.221"
+  ccVersion: "2.1.223"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-artifact-pr-review.md"
   source:
     owner: "Piebald-AI"
@@ -378,8 +378,11 @@ live signal is inactive; the briefing is otherwise complete):
    your list, never anything that writes, approves, or merges, and never a
    guessed name. You cannot see the tool's `readOnlyHint` annotation from
    this session; the baked script checks it at view time and stays silent
-   if the connector has not annotated the tool read-only, so your job here
-   is only to pick a genuine read and observe it succeed. From that one real
+   if the connector has not annotated the tool read-only — with one
+   name-pinned exemption: `pull_request_read` with the annotation absent
+   still binds on a GitHub-presenting connector, because some serving
+   paths strip annotations. Your job here is unchanged either way: pick a
+   genuine read and observe it succeed. From that one real
    request/response, note: the upstream tool name — not your full prefixed
    tool name, but the connector's own name for it; the
    `artifact-capabilities` skill you loaded gives the rule for recovering
@@ -509,9 +512,11 @@ In your reply, restate what each passed gate told the user. For the live
 signal (step 3b item 4): org-members-only visibility, the per-viewer
 connector prompt, the periodic re-read while open, and that the signal is
 detect-and-inform — viewers who have the GitHub connector connected see an
-"Out of date" banner once the branch moves (it activates only if the
-connector marks its PR-read tool read-only; otherwise the page stays
-quietly static), and refreshing the briefing means re-running this skill.
+"Out of date" banner once the branch moves (it activates if the
+connector marks its PR-read tool read-only — `pull_request_read` on a
+GitHub-presenting connector also activates with the annotation absent,
+the one name-pinned exemption — and otherwise the page stays quietly
+static), and refreshing the briefing means re-running this skill.
 For decisions: restate step 3c item 3's disclosure — that list is
 canonical; don't maintain a second copy here.
 
