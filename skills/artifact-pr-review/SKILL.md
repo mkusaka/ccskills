@@ -3,7 +3,7 @@ name: "artifact-pr-review"
 description: "Skill instructions for gathering a GitHub pull request, authoring a structured review briefing, optionally wiring a live staleness signal, filling the bundled HTML template, and publishing it as an Artifact"
 metadata:
   originalName: "Skill: Artifact PR review"
-  ccVersion: "2.1.223"
+  ccVersion: "2.1.224"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-artifact-pr-review.md"
   source:
     owner: "Piebald-AI"
@@ -476,8 +476,7 @@ page is off and why (the pills render as visibly inert spans):
    tell the user in your reply what the page they got does: with pills,
    the page is org-internal; anyone with WRITE access to the artifact —
    the user, and any teammates it is shared with as writers, never
-   view-only readers — can decide from it after a one-time browser prompt
-   asking to let the page update itself; each decision becomes a new
+   view-only readers — can decide from it; each decision becomes a new
    version of the page; and this session then acts on GitHub in response
    (decision comments autonomously, a review verdict only with the user's
    explicit confirmation — see "Acting on decisions").
@@ -488,9 +487,8 @@ page is off and why (the pills render as visibly inert spans):
 
 The pills' click behavior is the baked decisions script — fixed, vetted
 template code under the same byte-for-byte rule as the staleness script.
-Authorization lives entirely server-side (the writer gate and the consent
-prompt are enforced per click); the script is an affordance, not an
-authority.
+Authorization lives entirely server-side (the writer gate is enforced per
+click); the script is an affordance, not an authority.
 
 ## Step 4 — Publish
 
