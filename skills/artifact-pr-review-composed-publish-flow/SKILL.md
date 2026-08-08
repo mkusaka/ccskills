@@ -3,7 +3,7 @@ name: "artifact-pr-review-composed-publish-flow"
 description: "Skill instructions for gathering a GitHub pull request, authoring a structured review briefing payload, and publishing it through the Artifact tool pr_review input"
 metadata:
   originalName: "Skill: Artifact PR review (composed publish flow)"
-  ccVersion: "2.1.223"
+  ccVersion: "2.1.224"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-artifact-pr-review-composed-publish-flow.md"
   source:
     owner: "Piebald-AI"
@@ -148,7 +148,7 @@ activity, no approvals.
   "pr": {"owner": "<from the PR url>", "repo": "<from the PR url>", "number": 1,
          "reviewed_head_sha": "<step 1's headRefOid, lowercased>"},
   "lede": "<one sentence, <=280 chars: what this PR does and why>",
-  "blind_spots": {"didnt_change": ["<=5 items: adjacent things this PR deliberately does not touch"]},
+  "blind_spots": {"didnt_change": ["<=3 items: adjacent things this PR deliberately does not touch"]},
   "explainer": {
     "headline": "<one complete-thought sentence, <=160 chars>",
     "blocks": [
@@ -173,7 +173,7 @@ activity, no approvals.
        "options": [{"label": "<pill label, <=40 chars — 2-4 options, never include Skip>", "effect": "approve|request_change|note"}],
        "anchor": {"file": "<changed file path>", "snippet": "<one diff line, no +/- prefix, <=200 chars>", "line": "<new-side line number, or null>"}}
     ],
-    "followups": ["<2-4 short lowercase questions the reviewer is likely to type next, <=100 chars each>"],
+    "followups": ["<2-3 short lowercase questions the reviewer is likely to type next, <=100 chars each>"],
     "visual": "<ONE block of kind delta_diagram|flow|before_after — REQUIRED; the only escape is {\"kind\": \"none\", \"reason\": \"<why, <=160 chars>\"}, see the visual rule>",
     "actions_read": ["<=6 human-phrased items, <=40 chars each: \"the diff\", \"PR description\", \"changed files\">"]
   },
@@ -210,8 +210,10 @@ most the one load-bearing word.
 
 Before writing the payload file, re-read each prose field and count the
 defects: a first sentence that isn't the answer, a restated file list or
-diff stat, process narration (CI, bots, review activity) outside
-`signals`, "not just X but Y" constructions, a closing sentence that
+diff stat, process narration (CI, bots, review activity) anywhere the
+INPUT EMPHASIS forbids it — signals rows and concern context are its
+only licensed homes — "not just X but Y" constructions, a closing
+sentence that
 summarizes the field it closes, fluff that promises significance
 instead of delivering it ("a subtle but important change"). Rewrite
 until the count is zero — two
@@ -256,13 +258,17 @@ mechanical):
   THOUGHT readable without expanding. A substantial PR typically carries
   3..7; for a mechanical PR, headline + one concern block is the whole
   explainer.
+- followups and blind_spots are selections, not inventories: stop when
+  the next candidate is something you are adding for completeness. Every
+  run that fills a list to its cap is a run that padded it.
 - class_chip is your judgment from PR content alone — "unknown" over a
   guess. signals report only what you observed via gh (CI from
   statusCheckRollup, reviews from reviewDecision); omit rows you did not
   observe. The recommendation must not move with CI or review state —
   those are different rows of the page for a reason.
 
-**Validate before publishing**: re-read the scratch JSON — it parses, the
+**Validate before publishing**: re-read the scratch JSON silently — the
+check itself never appears in any reply — confirming it parses, the
 required keys exist, every concern option has a label and an effect, ids
 are unique, and `pr.reviewed_head_sha` is the head you actually reviewed.
 The publish refuses out-of-schema payloads with the failing field named —
@@ -341,7 +347,9 @@ viewers whose connector can write:
    the page claims success only when that path reads APPROVED.
 4. **Tell the user before you publish**: viewers with write access to the
    repository will be able to approve this PR from the page as
-   themselves, after a one-time consent prompt, and the page stays
+   themselves — after a one-time connector consent prompt (the approve
+   rides their GitHub connector, and the browser asks once before the
+   page may use it) — and the page stays
    org-members-only. Running without a human in the loop → keep
    `"stamp": null`.
 
@@ -356,7 +364,7 @@ inert:
 3. The user has not asked for a page shareable outside their organization
    (a self-updating page is org-internal; actionable pills are the DEFAULT
    otherwise). Tell the user what the page they got does: writers can
-   decide from it after a one-time prompt, each decision becomes a new
+   decide from it, each decision becomes a new
    version, and this session then acts on GitHub (decision comments
    autonomously; a review verdict only with explicit confirmation).
 4. A human is in the loop to read that disclosure. Without one, skip the
@@ -383,14 +391,25 @@ The page is composed, validated, and published in one step; the guard and
 identity checks refuse with a specific reason on any mismatch — fix the
 named field, don't force.
 
-Then tell the user, in a few sentences at most: the recommendation, the
-ONE finding that drives it, the link (or, when publishing is impossible,
-an honest line saying so and where the payload file is), and step 3's
-disclosures in a line. Stop there. Everything else you found is already
-ON the page — that is the point of building it — so a chat digest of the
-remaining concerns, observations, or capability mechanics makes the
-reviewer read the review twice and buries the link they need. The
-urge to show your work is the tell that the note is done.
+Then write the closing reply. Its entire job is to hand over the page:
+the recommendation and the single finding that drives it; the link (or,
+when publishing is impossible, the honest line that it could not be
+published here and where the payload file is); and, only when step 3
+declared or withheld a capability, a line saying so in product terms —
+which of the page's abilities (live status, decision pills, in-page
+approve) are on or off and what turns them on — never naming skills,
+tools, or other internal plumbing (the GitHub connector, the
+user-visible surface that turns them on, is fine to name). Aim for a
+few hundred characters in total — a handoff note, not a summary; past
+about half a short screen you are doing the page's job again — and
+nothing else: no second finding, smuggled in as a clause, a
+parenthesis, or a companion question; no digest of the other concerns;
+no capability mechanics; no observations that sit in the collapsed
+detail; and no account of your validation or tooling — the payload
+speaks for itself. Every one of those lives on the page already;
+repeating them into chat makes the reviewer read the review twice and
+buries the link they need. The urge to show more of your work is the
+signal that the reply is already done — the page is the work.
 
 A re-run that re-reviews the same PR publishes a NEW artifact (omit
 `url`): review pages are certified records, and a targeted publish of an
