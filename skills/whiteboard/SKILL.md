@@ -3,7 +3,7 @@ name: "whiteboard"
 description: "Creates a whiteboard Artifact for architecture sketches and planning feedback using a freehand canvas"
 metadata:
   originalName: "Skill: Whiteboard"
-  ccVersion: "2.1.224"
+  ccVersion: "2.1.228"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-whiteboard.md"
   source:
     owner: "Piebald-AI"
@@ -49,10 +49,11 @@ tag you are fixing, or helper steps.
    the working tree, then run, from the skill's base directory (listed
    above; `node` or `bun`), with your three files given as absolute
    paths:
-   `node merge-state.mjs --state <empty-state file> --add <seed.json> --template template.html --title "Whiteboard — <topic>" --out <your whiteboard.html>`
-   `--title` names the board after the request ("Whiteboard — ingest
-   pipeline"), keeping the `Whiteboard —` prefix, or plain
-   `Whiteboard` when there is no topic yet; `whiteboard.html` lands at a
+   `node merge-state.mjs --state <empty-state file> --add <seed.json> --template template.html --title "<topic> whiteboard" --out <your whiteboard.html>`
+   `--title` names the board after the request — a short name of the
+   topic followed by the word "whiteboard" ("Ingest pipeline
+   whiteboard"), or plain `Whiteboard` when there is no topic yet;
+   never a name with an appended explainer after a dash or colon. `whiteboard.html` lands at a
    stable path in the working tree and is kept — every later reply
    republishes it. The helper and `template.html` always run from the
    base directory, never the working tree; never edit the app code —
