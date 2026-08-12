@@ -3,7 +3,7 @@ name: "prototype"
 description: "Turns a greenfield product or UI idea into a working proof-of-concept Artifact through intake, assumption setting, publication, and feedback iteration"
 metadata:
   originalName: "Skill: Prototype"
-  ccVersion: "2.1.223"
+  ccVersion: "2.1.228"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-prototype.md"
   source:
     owner: "Piebald-AI"
@@ -76,7 +76,7 @@ whole check: do not spin up browsers, servers, or test harnesses to
 drive the page, and do not start a second polish pass.
 
 Then publish with the Artifact tool, following its own instructions — a
-stable title, a favicon emoji, and a one-sentence description. If the
+short stable title, a favicon emoji, and a one-sentence description. If the
 Artifact tool is unavailable, say so in one plain line and point the
 user at the file instead — do not hunt for another way to host it.
 Give the user the link plus one or two lines: what the prototype shows,
