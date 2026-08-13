@@ -3,7 +3,7 @@ name: "artifact-pr-review"
 description: "Skill instructions for gathering a GitHub pull request, authoring a structured review briefing, optionally wiring a live staleness signal, filling the bundled HTML template, and publishing it as an Artifact"
 metadata:
   originalName: "Skill: Artifact PR review"
-  ccVersion: "2.1.224"
+  ccVersion: "2.1.229"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-artifact-pr-review.md"
   source:
     owner: "Piebald-AI"
@@ -14,7 +14,7 @@ metadata:
 
 ---
 name: artifact-pr-review
-description: Create a PR review artifact — a structured review briefing for a GitHub pull request (synthesis title and bottom line, a recommendation, reviewer judgment calls, a visual explainer, signals, and blind spots), published as a shareable page. Use when the user asks to review a PR as an artifact, publish a PR review page, or share a review briefing. NOT a narrative walkthrough — for a tour-the-diff walkthrough artifact use pr-explainer. Only for CREATING a new artifact; edits to an existing artifact modify its HTML directly.
+description: Create a PR review artifact — a structured review briefing for a GitHub pull request (synthesis title and bottom line, a recommendation, reviewer judgment calls, a visual explainer, signals, and blind spots), published as a shareable page. Use when the user asks to review a PR as an artifact, publish a PR review page, or share a review briefing. NOT a narrative walkthrough. Only for CREATING a new artifact; edits to an existing artifact modify its HTML directly.
 ---
 
 A PR review briefing page: what the PR changes and why, what needs the
