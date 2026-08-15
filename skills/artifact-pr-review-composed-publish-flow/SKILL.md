@@ -3,7 +3,7 @@ name: "artifact-pr-review-composed-publish-flow"
 description: "Skill instructions for gathering a GitHub pull request, authoring a structured review briefing payload, and publishing it through the Artifact tool pr_review input"
 metadata:
   originalName: "Skill: Artifact PR review (composed publish flow)"
-  ccVersion: "2.1.229"
+  ccVersion: "2.1.232"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-artifact-pr-review-composed-publish-flow.md"
   source:
     owner: "Piebald-AI"
@@ -24,7 +24,7 @@ JSON, publish it with the Artifact tool's `pr_review` input. You never
 write page HTML — the publish path composes the page from a vetted
 template, renders your prose through a restricted markdown renderer, and
 draws the delta diagram itself from the nodes and edges you supply. When
-the page is published with its self-update capability, the "Needs your
+the page is published with its artifact-publish capability, the "Needs your
 call" items are decidable from the page itself, and this session acts on
 those decisions — see "Acting on decisions" at the end.
 
@@ -353,8 +353,8 @@ viewers whose connector can write:
    org-members-only. Running without a human in the loop → keep
    `"stamp": null`.
 
-**The decision pills (self capability).** Declared via the Artifact tool's
-`capabilities` input, not the payload. Declare `"self": {}` only when ALL
+**The decision pills (artifact-publish capability).** Declared via the Artifact tool's
+`capabilities` input, not the payload. Declare `"artifact": {}` only when ALL
 of these hold — otherwise publish without it and say the pills render
 inert:
 
@@ -374,11 +374,11 @@ inert:
 
 Call the `Artifact` tool with `pr_review: true`, `file_path` pointing at
 the payload JSON, a favicon, and the `capabilities` input per step 3
-(`{"self": {}}`, the mcp shape from the live binding, both, or omitted).
+(`{"artifact": {}}`, the mcp shape from the live binding, both, or omitted; older servers accept the legacy `"self"` spelling).
 When `stamp` is filled, you MUST declare the mcp manifest with BOTH
 tools on the one server in the `capabilities` input —
 `{"mcp":{"servers":[{"server":<the GitHub server>,"tools":
-[<live.tool>,<stamp.tool>]}]}}` (alongside `"self"` when step 3
+[<live.tool>,<stamp.tool>]}]}}` (alongside `"artifact"` when step 3
 declared it). The publish PINS the manifest to exactly what the pinned
 scripts call and refuses anything else: with `stamp` filled, exactly
 both tools; with `stamp` null, at most `[<live.tool>]`; and with
@@ -426,7 +426,7 @@ not outlive a review round.
 
 ## Acting on decisions
 
-When the publish declared the self capability, a writer's pill click
+When the publish declared the artifact-publish capability, a writer's pill click
 republishes the page with that item recorded (island entry
 `"state": "resolved"`, the clicked token in `"choice"`), and the new
 version reaches you live (artifact subscription notice — interactive
