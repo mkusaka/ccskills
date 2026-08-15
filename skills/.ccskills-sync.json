@@ -3,6 +3,7 @@
   "selection": "builtin-skills",
   "skills": [
     "agent-design-patterns",
+    "artifact-components",
     "artifact-dashboard",
     "artifact-data-table",
     "artifact-design",
