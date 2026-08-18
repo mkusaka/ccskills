@@ -3,7 +3,7 @@ name: "prototype"
 description: "Turns a product or UI idea—including an explicitly requested feature shown in an existing app—into a working proof-of-concept Artifact through intake, assumption setting, publication, and feedback iteration"
 metadata:
   originalName: "Skill: Prototype"
-  ccVersion: "2.1.232"
+  ccVersion: "2.1.234"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-prototype.md"
   source:
     owner: "Piebald-AI"
@@ -99,10 +99,15 @@ Load the `artifact-design` skill, then write one self-contained HTML
 page in your scratchpad directory: inline styles and script, no build
 step, no external services, realistic sample data where real data would
 go — except any region the section below, when present, wires to the
-real thing. Make the core interaction actually work — that is the
-proof — and mock whatever sits behind it. Build the smallest page that
-proves the idea: every extra screen, setting, or flourish slows the
-loop and is one more thing to break in the demo. Every prototype
+real thing. The one outside request a page may make is a Google Fonts
+stylesheet `<link>` (`fonts.googleapis.com`, whose font files come from
+`fonts.gstatic.com`) when the type is part of what you are showing;
+keep a fallback stack on every face so the page still reads if the
+fonts never load, and inline everything else. Make the core
+interaction actually work — that is the proof — and mock whatever sits
+behind it. Build the smallest page that proves the idea: every extra
+screen, setting, or flourish slows the loop and is one more thing to
+break in the demo. Every prototype
 answers one design question: name it in one sentence, written at the
 top of the page, so reactions land against the question rather than
 the styling — and when you cannot name it, that is intake telling you
