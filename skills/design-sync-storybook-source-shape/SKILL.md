@@ -3,7 +3,7 @@ name: "design-sync-storybook-source-shape"
 description: "Design sync sub-skill instructions for using a repo's Storybook as the fidelity oracle when building, validating, matching, uploading, and re-syncing component previews"
 metadata:
   originalName: "Skill: Design sync Storybook source shape"
-  ccVersion: "2.1.199"
+  ccVersion: "2.1.235"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-design-sync-storybook-source-shape.md"
   source:
     owner: "Piebald-AI"
