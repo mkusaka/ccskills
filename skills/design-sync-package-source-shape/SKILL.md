@@ -3,7 +3,7 @@ name: "design-sync-package-source-shape"
 description: "Shape-specific /design-sync instructions for syncing a React design system from a built package without Storybook"
 metadata:
   originalName: "Skill: /design-sync package source shape"
-  ccVersion: "2.1.176"
+  ccVersion: "2.1.235"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-design-sync-package-source-shape.md"
   source:
     owner: "Piebald-AI"

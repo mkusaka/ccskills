@@ -3,7 +3,7 @@ name: "setup-cowork-role-selection"
 description: "First step of the setup-cowork skill that explains Cowork, asks for the user's role, calls ShowOnboardingRolePicker, or falls back to a plain-text role list"
 metadata:
   originalName: "Skill: Setup Cowork role selection"
-  ccVersion: "2.1.210"
+  ccVersion: "2.1.235"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-setup-cowork-role-selection.md"
   source:
     owner: "Piebald-AI"
@@ -23,7 +23,7 @@ Next, ask the user for their role. Something like: "Let's get you set up — tak
 
 If the ShowOnboardingRolePicker tool is not available in this session, ask in plain text instead and offer these options as a short list they can reply to (they can also answer in their own words):
 
-${COWORK_ROLE_OPTIONS.map((COWORK_ROLE_OPTION)=>`- ${COWORK_ROLE_OPTION}`).join(`
+${COWORK_ROLE_OPTIONS.map((COWORK_ROLE_OPTION) => `- ${COWORK_ROLE_OPTION}`).join(`
 `)}
 
 In the plain-text case, end your turn after asking. Their reply — one of the options or a free-form answer — is their role for the rest of setup.

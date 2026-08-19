@@ -3,7 +3,7 @@ name: "stuck-background-daemon-diagnostics"
 description: "The background-daemon troubleshooting section of the /stuck skill"
 metadata:
   originalName: "Skill: /stuck (background-daemon diagnostics)"
-  ccVersion: "2.1.173"
+  ccVersion: "2.1.235"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-stuck-background-daemon-diagnostics.md"
   source:
     owner: "Piebald-AI"
@@ -25,12 +25,12 @@ The background daemon manages `& <prompt>` jobs and `claude agents`. If the issu
 
 ### daemon.lock
 ```json
-${DAEMON_LOCK_CONTENT??"(missing)"}
+${DAEMON_LOCK_CONTENT ?? "(missing)"}
 ```
 
 ### daemon.status.json
 ```json
-${DAEMON_STATUS_CONTENT??"(missing)"}
+${DAEMON_STATUS_CONTENT ?? "(missing)"}
 ```
 
 ### Daemon log (`${DAEMON_LOG_PATH}`)
