@@ -3,6 +3,7 @@
   "selection": "builtin-skills",
   "skills": [
     "agent-design-patterns",
+    "anthropic-python-sdk-0-x-to-1-x-upgrade",
     "artifact-components",
     "artifact-dashboard",
     "artifact-data-table",

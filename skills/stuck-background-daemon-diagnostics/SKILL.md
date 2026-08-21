@@ -25,12 +25,12 @@ The background daemon manages `& <prompt>` jobs and `claude agents`. If the issu
 
 ### daemon.lock
 ```json
-${DAEMON_LOCK_CONTENT ?? "(missing)"}
+${DAEMON_LOCK_CONTENT??"(missing)"}
 ```
 
 ### daemon.status.json
 ```json
-${DAEMON_STATUS_CONTENT ?? "(missing)"}
+${DAEMON_STATUS_CONTENT??"(missing)"}
 ```
 
 ### Daemon log (`${DAEMON_LOG_PATH}`)
