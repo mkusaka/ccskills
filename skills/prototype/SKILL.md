@@ -3,7 +3,7 @@ name: "prototype"
 description: "Turns a product or UI idea—including an explicitly requested feature shown in an existing app—into a working proof-of-concept Artifact through intake, assumption setting, publication, and feedback iteration"
 metadata:
   originalName: "Skill: Prototype"
-  ccVersion: "2.1.234"
+  ccVersion: "2.1.238"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-prototype.md"
   source:
     owner: "Piebald-AI"
@@ -120,8 +120,13 @@ so every revision lands as a new version of the same artifact.
 Before publishing, re-read the file once for the mistakes that would
 break the demo — an unclosed tag, a handler wired to nothing, a script
 error — and fix what that read turns up. One read and its fixes are the
-whole check: do not spin up browsers, servers, or test harnesses to
-drive the page, and do not start a second polish pass.
+whole pre-publish check: do not spin up browsers, servers, or test
+harnesses to drive the page, and do not start a second polish pass.
+After publishing, if the Artifact tool offers a "verify" action, that is
+the one sanctioned runtime check: it reads the console output and errors
+a viewer's browser captured for the published version. An empty result
+can mean no viewer has opened the page yet — that is not evidence the
+demo works, so say what you checked rather than claiming it works.
 
 Then publish with the Artifact tool, following its own instructions — a
 short stable title, a favicon emoji, and a one-sentence description. If the

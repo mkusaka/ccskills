@@ -3,7 +3,7 @@ name: "artifact-pr-review"
 description: "Skill instructions for gathering a GitHub pull request, authoring a structured review briefing, optionally wiring a live staleness signal, filling the bundled HTML template, and publishing it as an Artifact"
 metadata:
   originalName: "Skill: Artifact PR review"
-  ccVersion: "2.1.234"
+  ccVersion: "2.1.238"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-artifact-pr-review.md"
   source:
     owner: "Piebald-AI"
@@ -588,7 +588,9 @@ newer than the one you last read:
    only the head of the HTML and notes where the full HTML was saved —
    the island sits at the BOTTOM of the page, so in that case extract
    the island from the saved file MECHANICALLY, by its boundaries: the
-   text from `id="prr-decisions">` to the next script-close tag (a
+   text from the end of the island's opening tag — the tag that begins
+   `<script type="application/json" id="prr-decisions"`, a sequence page
+   prose can never contain unescaped — to the next script-close tag (a
    bounded text search, not a full Read — boundary-based, not
    line-based, so a serializer quirk cannot silently truncate it) —
    never read the whole saved page into context, because
