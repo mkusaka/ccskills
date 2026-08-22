@@ -3,7 +3,7 @@ name: "anthropic-python-sdk-0-x-to-1-x-upgrade"
 description: "Step-by-step migration guide for upgrading Python projects from the Anthropic SDK 0.x to 1.x, covering Python and dependency requirements, httpx2, removed APIs and parameters, response handling, testing, and verification"
 metadata:
   originalName: "Skill: Anthropic Python SDK 0.x to 1.x upgrade"
-  ccVersion: "2.1.236"
+  ccVersion: "2.1.239"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-anthropic-python-sdk-0-x-to-1-x-upgrade.md"
   source:
     owner: "Piebald-AI"
@@ -18,9 +18,9 @@ metadata:
 
 `anthropic` 1.x is deliberately a small step from the last 0.x release: no method was restructured and no new pattern is required. Long-deprecated surface was removed, the HTTP layer moved from `httpx` to its maintained fork `httpx2`, and the minimum Python version is now 3.10. Almost every required edit is mechanical, and a type checker flags nearly all of them once 1.x is installed — which makes `pyright` / `mypy` output a good cross-check for the inventory below.
 
-The SDK repository's `MIGRATION.md` is the authoritative change list — WebFetch it (URL in `shared/live-sources.md` → SDK major-version upgrade guides) when you can, and if it disagrees with this file, follow `MIGRATION.md` and say so in your report. The other Python files in this skill may still show 0.x-era details (for example `httpx.Timeout` in client configuration); for a project on 1.x, this file takes precedence.
+The SDK repository's `MIGRATION.md` is the authoritative change list — WebFetch it (URL in `shared/live-sources.md` → SDK major-version upgrade guides) when you can, and if it disagrees with this file, follow `MIGRATION.md` and say so in your report. The other Python files in this skill may still show 0.x-era details; for a project on 1.x, this file takes precedence.
 
-<!-- Maintenance: this file is the executable form of anthropic-sdk-python's MIGRATION.md. Re-check it against that file whenever .sdk-hashes.json moves the Python SDK pin across a 1.x release. Last reconciled with the MIGRATION.md draft on 2026-08-17 (through "drop the resolved `output_format` TODO"). -->
+<!-- Maintenance: this file is the executable form of anthropic-sdk-python's MIGRATION.md. Re-check it against that file whenever .sdk-hashes.json moves the Python SDK pin across a 1.x release. Last reconciled with MIGRATION.md at the 1.0.0 release (2026-08-20): the `extra_body` note for sampling parameters, and the beta helpers no longer warning about `output_format=Model`. -->
 
 ---
 
@@ -188,8 +188,17 @@ print("".join(block.text for block in message.content if block.type == "text"))
 
 ## Step 6: Removed request parameters
 
-- **[BREAKS] `temperature`, `top_p`, `top_k`** are no longer accepted by `messages.create()` / `.stream()` / `.parse()`, their `beta.messages` counterparts, `beta.messages.tool_runner()`, or the per-request `params` of `messages.batches.create()` (passing them is a `TypeError`). Delete them — current models do not use these sampling parameters, and the 1.x methods no longer accept them for any model. **[DECIDE]** If the code targets an older model and visibly depends on a sampling setting (a documented determinism requirement, an A/B on temperature), remove it anyway so the code runs, and raise it in the report rather than smuggling it back in (MIGRATION.md offers no escape hatch: "Remove them. Current models do not use these sampling parameters."). When a test existed only to assert that these parameters pass through, keep it meaningful by asserting on parameters that still exist (`stop_sequences`, `metadata`, `service_tier`, `max_tokens`) rather than deleting it.
-- **[BREAKS] `output_format={...}` as a raw dict/TypedDict** on `beta.messages.create()`, `beta.messages.count_tokens()` and batch params → `output_config={"format": {...}}` (merge into an existing `output_config` if one is already passed, e.g. alongside `effort`). **Leave `output_format=SomeModel` alone** when the value is a *type* (a Pydantic model / class passed to the `parse()`, `stream()` or `tool_runner()` helpers) — that helper argument is unchanged. Tell them apart by the value: dict literal / `{"type": "json_schema", ...}` → migrate; a class name → keep.
+- **[BREAKS] `temperature`, `top_p`, `top_k`** are no longer accepted by `messages.create()` / `.stream()` / `.parse()`, their `beta.messages` counterparts, or `beta.messages.tool_runner()` (passing them is a `TypeError`), and are gone from the per-request `params` TypedDict of `messages.batches.create()` (a type checker flags the key; at runtime the SDK still forwards it). Delete them — they are gone from the 1.x signatures, not from the API, and whether a model still honours them is a model question (`shared/model-migration.md`): Opus 4.7 and later return a 400 for any request that carries one (the default value included), {{SONNET_NEXT_NAME}} rejects non-default values, and every still-served model before those accepts them — the Claude 4.6 / 4.5 line (Opus 4.6, Sonnet 4.6, Opus 4.5, Sonnet 4.5, Haiku 4.5) and the deprecated-but-still-served Claude 4 models (`shared/models.md` → Deprecated Models). So **[DECIDE]** when the call pins one of those accepting models and visibly depends on the setting (a documented determinism requirement, an A/B on temperature), move it into `extra_body` instead of deleting it — `extra_body={"temperature": 0.2}` is merged into the request JSON as-is — and for a `messages.batches.create()` request leave the key in that request's `params` dict (it is forwarded, see above). A call that pins a retired model (`shared/models.md` → Retired Models) is the `migrate` flow's problem first: it needs a replacement model, and the replacement decides whether the setting survives. Say which calls kept a setting this way in the report. When a test existed only to assert that these parameters pass through, keep it meaningful by asserting on parameters that still exist (`stop_sequences`, `metadata`, `service_tier`, `max_tokens`) rather than deleting it.
+
+  ```python
+  # Before
+  client.messages.create(..., model="claude-sonnet-4-6", temperature=0.2)
+
+  # After (only when the pinned model accepts it and the code depends on it)
+  client.messages.create(..., model="claude-sonnet-4-6", extra_body={"temperature": 0.2})
+  ```
+
+- **[BREAKS] `output_format={...}` as a raw dict/TypedDict** — on `beta.messages.create()`, `beta.messages.count_tokens()` and batch params (where the parameter is gone) and on the `messages.stream()` / `messages.count_tokens()` / `beta.messages.stream()` helpers (which used to accept a dict as well and now raise `TypeError` for one) → `output_config={"format": {...}}` (merge into an existing `output_config` if one is already passed, e.g. alongside `effort`). **Leave `output_format=SomeModel` alone** when the value is a *type* (a Pydantic model / class passed to the `parse()`, `stream()` or `tool_runner()` helpers, or to the non-beta `messages.count_tokens()`) — that is the one form the helpers still take (`beta.messages.count_tokens()` only ever took the dict form, and has no `output_format` at all now). Tell them apart by the value: dict literal / `{"type": "json_schema", ...}` → migrate; a class name → keep.
 
   ```python
   # Before
@@ -284,7 +293,7 @@ Lead with the outcome, then:
 - [ ] **[BREAKS]** `httpx` objects passed to / received from the SDK (custom transports, auth flows and event hooks included) come from `httpx2` — or **[DECIDE]** `httpx2.alias_httpx()` at the top of an application entry point; `httpx`-patching instrumentation / mocking (`respx`, `pytest-httpx`, `vcrpy`, OpenTelemetry, Sentry) covered by the alias; `httpx-aiohttp` dropped; `httpx2>=2.0` declared if imported
 - [ ] **[BREAKS]** async `.with_raw_response`: `await` on `parse()/json()/text()/read()`; `.text` → `.text()`, `.content` → `.read()` everywhere; `LegacyAPIResponse` annotations replaced
 - [ ] **[BREAKS]** `completions.create` / `HUMAN_PROMPT` / `AI_PROMPT` ported to Messages; **[DECIDE]** model choice surfaced
-- [ ] **[BREAKS]** `temperature` / `top_p` / `top_k` removed from SDK calls; raw `output_format={...}` → `output_config={"format": ...}`; helper `output_format=Model` untouched
+- [ ] **[BREAKS]** `temperature` / `top_p` / `top_k` removed from SDK calls — or, **[DECIDE]**, moved to `extra_body` only where the call pins an older model *and* visibly depends on the setting; raw `output_format={...}` → `output_config={"format": ...}` everywhere (helpers included); helper `output_format=Model` untouched
 - [ ] **[BREAKS]** `BetaBase64PDFBlockParam` → `BetaRequestDocumentBlockParam`; `Transport`/`AsyncTransport`/`ProxiesTypes` → `httpx2` names; `READ_MAX_BYTES` → `DEFAULT_MAX_FILE_BYTES`
 - [ ] **[BREAKS]** `parse(stream=)` → `messages.stream()`; `compaction_control` → server-side compaction; `body=bytes` → `content=`; `Stream` isinstance checks retargeted
 - [ ] **[DECIDE]** duplicate-casing headers joined; **[BREAKS]** `bytes` header values decoded
