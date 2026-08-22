@@ -3,7 +3,7 @@ name: "artifact-pr-review"
 description: "Skill instructions for gathering a GitHub pull request, authoring a structured review briefing, optionally wiring a live staleness signal, filling the bundled HTML template, and publishing it as an Artifact"
 metadata:
   originalName: "Skill: Artifact PR review"
-  ccVersion: "2.1.238"
+  ccVersion: "2.1.239"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-artifact-pr-review.md"
   source:
     owner: "Piebald-AI"
@@ -555,8 +555,11 @@ When the publish declared the artifact-publish capability, the published page is
 the decision channel: a writer clicks a pill, the page republishes itself
 with that item recorded (island entry `"state": "resolved"`, the clicked
 token in `"choice"`), and the new version reaches you two ways. Live:
-while this session's artifact subscription is connected, a "republished by
-another session — WebFetch it" notice arrives. The subscription runs in
+while this session's artifact subscription is connected, a notice arrives
+that the artifact "appears to have been republished elsewhere (by another
+session, or by someone saving from the page itself)" — the pill click is
+the page saving itself, so that notice is your signal (it names how to
+re-read it). The subscription runs in
 interactive sessions and SDK main loops — not in cloud sessions,
 subagents, background, or print mode — and the socket dies within minutes
 when the machine sleeps, so a notice can simply be missed. Pull: on any
@@ -583,8 +586,10 @@ confirmation.
 **On any decision signal** — the live notice, or a read showing a version
 newer than the one you last read:
 
-1. **Read** the current page (WebFetch the artifact URL) and parse ONLY
-   the `prr-decisions` island. On large pages the fetch result inlines
+1. **Read** the current page — with the Artifact tool (`action: "read"`,
+   `url`), or by WebFetching the artifact URL where the Artifact tool
+   isn't available — and parse ONLY
+   the `prr-decisions` island. On large pages the read result inlines
    only the head of the HTML and notes where the full HTML was saved —
    the island sits at the BOTTOM of the page, so in that case extract
    the island from the saved file MECHANICALLY, by its boundaries: the
@@ -668,7 +673,8 @@ newer than the one you last read:
    post the decision comments, note that the verdict is pending the
    user's confirmation, and leave it at that.
 5. **Mark acted and republish — best-effort.** In your LOCAL filled HTML
-   (never in WebFetched bytes — republish only content you authored), for
+   (never in the bytes you read back — republish only content you
+   authored), for
    each item you acted on (or validated as `skip`): set its island
    entry's `"state"` to `"acted"` (keep `"choice"`), set the item's
    `data-decision-state="acted"` (keep `data-resolved-choice`), keep the

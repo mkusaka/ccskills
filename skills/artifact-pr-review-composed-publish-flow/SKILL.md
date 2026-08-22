@@ -3,7 +3,7 @@ name: "artifact-pr-review-composed-publish-flow"
 description: "Skill instructions for gathering a GitHub pull request, authoring a structured review briefing payload, and publishing it through the Artifact tool pr_review input"
 metadata:
   originalName: "Skill: Artifact PR review (composed publish flow)"
-  ccVersion: "2.1.238"
+  ccVersion: "2.1.239"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-artifact-pr-review-composed-publish-flow.md"
   source:
     owner: "Piebald-AI"
@@ -444,7 +444,9 @@ decisions and act only on their confirmation.
 
 **On any decision signal**:
 
-1. **Read** the current page (WebFetch the artifact URL) and parse ONLY the
+1. **Read** the current page — with the Artifact tool (`action: "read"`,
+   `url`), or by WebFetching the artifact URL where the Artifact tool isn't
+   available — and parse ONLY the
    two islands — `prr-decisions` (the decisions to act on) and `prr-anchor`
    (step 5's republish needs its `publishedAt`) — extracting each
    mechanically by its boundaries (from the end of the island's opening
@@ -490,7 +492,7 @@ decisions and act only on their confirmation.
    acted item to `"decisions_state"` —
    `[{"id": "q1", "choice": "<the clicked token>", "acted_note": "<one short sentence of what you did — your own words, never PR text>"}]`
    — and add `"republish": {"published_at": "<the publishedAt from the
-   page's prr-anchor island — read it in step 1's fetch>"}`. Act on EVERY
+   page's prr-anchor island — read it in step 1's read>"}`. Act on EVERY
    resolved entry before republishing: the composed page renders items
    only as open or acted, and the publish REFUSES a republish that omits
    any resolved or acted item from decisions_state (an omitted item would
