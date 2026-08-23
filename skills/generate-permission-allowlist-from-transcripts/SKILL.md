@@ -3,7 +3,7 @@ name: "generate-permission-allowlist-from-transcripts"
 description: "Analyzes session transcripts to extract frequently used read-only tool-call patterns and adds them to the project's .claude/settings.json permission allowlist to reduce permission prompts"
 metadata:
   originalName: "Skill: Generate permission allowlist from transcripts"
-  ccVersion: "2.1.239"
+  ccVersion: "2.1.240"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-generate-permission-allowlist-from-transcripts.md"
   source:
     owner: "Piebald-AI"

@@ -35,16 +35,12 @@ helper visible in the diff context, and dead code the diff leaves behind.
 Do **not** flag style, naming, perf, missing tests, or anything outside the
 hunk.
 
-${
-  HAS_REPORT_FINDINGS_TOOL
-    ? `Report at most **8 findings**, most-severe first, in one
+${HAS_REPORT_FINDINGS_TOOL?`Report at most **8 findings**, most-severe first, in one
 ${REPORT_FINDINGS_TOOL_NAME} call with `{level, findings}` — each entry has
 `file`, `line`, `summary`, `short_summary` (≤60 characters), and
 `failure_scenario`.
 Target at least min(files_changed, 4) findings — if you see fewer, widen to other hunks in the same diff before stopping. If fewer than 4 genuine findings exist, report what you have. Do not also print the findings as text.
-`
-    : `Output at most **8 findings**, most-severe first, one line each:
+`:`Output at most **8 findings**, most-severe first, one line each:
 `path/to/file.ext:123 — what's wrong and the concrete failure`.
 Target at least min(files_changed, 4) findings — if you see fewer, widen to other hunks in the same diff before stopping. If fewer than 4 genuine findings exist, emit what you have.
-`
-}
+`}

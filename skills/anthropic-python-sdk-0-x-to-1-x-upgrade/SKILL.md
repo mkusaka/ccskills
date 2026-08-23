@@ -3,7 +3,7 @@ name: "anthropic-python-sdk-0-x-to-1-x-upgrade"
 description: "Step-by-step migration guide for upgrading Python projects from the Anthropic SDK 0.x to 1.x, covering Python and dependency requirements, httpx2, removed APIs and parameters, response handling, testing, and verification"
 metadata:
   originalName: "Skill: Anthropic Python SDK 0.x to 1.x upgrade"
-  ccVersion: "2.1.239"
+  ccVersion: "2.1.240"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-anthropic-python-sdk-0-x-to-1-x-upgrade.md"
   source:
     owner: "Piebald-AI"
