@@ -3,7 +3,7 @@ name: "artifact-pr-review-description-composed-publish-flow"
 description: "Trigger description for the composed PR review briefing Artifact flow with republish-only updates"
 metadata:
   originalName: "Skill: Artifact PR review description (composed publish flow)"
-  ccVersion: "2.1.229"
+  ccVersion: "2.1.242"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-artifact-pr-review-description-composed-publish-flow.md"
   source:
     owner: "Piebald-AI"
@@ -12,4 +12,4 @@ metadata:
     path: "system-prompts/skill-artifact-pr-review-description-composed-publish-flow.md"
 ---
 
-Create a PR review artifact — a structured review briefing for a GitHub pull request (synthesis title and bottom line, a recommendation, reviewer judgment calls, a visual explainer, signals, and blind spots), published as a shareable page. Use when the user asks to review a PR as an artifact, publish a PR review page, or share a review briefing. NOT a narrative walkthrough. Only for CREATING a new artifact; a published composed review page is updated ONLY through the acting loop's republish — never by editing its HTML directly.
+Create a PR review artifact - a structured review briefing for a GitHub pull request (synthesis title and bottom line, a recommendation, reviewer judgment calls, a visual explainer, signals, and blind spots), published as a shareable page. Use when the user asks to review a PR as an artifact, publish a PR review page, or share a review briefing. NOT a narrative walkthrough. Only for CREATING a new artifact; a published composed review page is updated ONLY through the acting loop's republish - never by editing its HTML directly.

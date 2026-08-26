@@ -1,6 +1,6 @@
 ---
 name: "update-claude-code-config"
-description: "Skill for modifying Claude Code configuration file (settings.json)."
+description: "Skill for modifying Claude Code configuration file (settings.json)"
 metadata:
   originalName: "Skill: Update Claude Code Config"
   ccVersion: "2.1.118"
