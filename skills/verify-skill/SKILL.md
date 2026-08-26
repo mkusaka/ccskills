@@ -1,9 +1,9 @@
 ---
 name: "verify-skill"
-description: "Skill for opinionated verification workflow for validating code changes."
+description: "Skill for opinionated verification workflow for validating code changes"
 metadata:
   originalName: "Skill: Verify skill"
-  ccVersion: "2.1.205"
+  ccVersion: "2.1.246"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-verify-skill.md"
   source:
     owner: "Piebald-AI"

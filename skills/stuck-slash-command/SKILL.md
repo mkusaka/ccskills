@@ -3,7 +3,7 @@ name: "stuck-slash-command"
 description: "Diagnoses frozen or slow Claude Code sessions"
 metadata:
   originalName: "Skill: /stuck slash command"
-  ccVersion: "2.1.77"
+  ccVersion: "2.1.242"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-stuck-slash-command.md"
   source:
     owner: "Piebald-AI"

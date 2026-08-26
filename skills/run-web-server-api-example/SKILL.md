@@ -3,7 +3,7 @@ name: "run-web-server-api-example"
 description: "Example file for the Run app skill showing how to document a server or API lifecycle with background launch, readiness checks, curl verification, and shutdown"
 metadata:
   originalName: "Skill: Run web server API example"
-  ccVersion: "2.1.213"
+  ccVersion: "2.1.246"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-run-web-server-api-example.md"
   source:
     owner: "Piebald-AI"
@@ -23,10 +23,10 @@ useless to an agent.
 
 A good server run skill has:
 
-1. **Prerequisites & setup** — same as any project.
-2. **Run** — the background-launch pattern (below), not a blocking command.
-3. **Verify** — a `curl` or similar that confirms the server is actually up.
-4. **Stop** — how to cleanly terminate the background process.
+1. **Prerequisites & setup** - same as any project.
+2. **Run** - the background-launch pattern (below), not a blocking command.
+3. **Verify** - a `curl` or similar that confirms the server is actually up.
+4. **Stop** - how to cleanly terminate the background process.
 
 If the background-launch + readiness-poll + smoke-curl sequence is more
 than a couple of lines, put it in a `smoke.sh` inside the skill directory
@@ -59,7 +59,7 @@ Then the verification step:
 
 > ```bash
 > curl http://localhost:3000/health
-> # → {"status":"ok"}
+> # -> {"status":"ok"}
 > ```
 
 And stopping:
@@ -67,7 +67,7 @@ And stopping:
 > ```bash
 > kill $SERVER_PID
 > # $! is the npm wrapper's PID and npm doesn't forward SIGTERM to the
-> # server it spawned — killing the port's listener is what reliably frees it:
+> # server it spawned - killing the port's listener is what reliably frees it:
 > lsof -ti:3000 -sTCP:LISTEN | xargs -r kill
 > ```
 
@@ -79,7 +79,7 @@ line and can kill the session that ran them.
 
 - **Which port.** Make it explicit and say how to override it (`PORT=4000 npm start`).
 - **What "ready" looks like.** A specific log line or a health endpoint to hit.
-- **Required env vars.** Database URL, API keys, etc. — with a template `.env`
+- **Required env vars.** Database URL, API keys, etc. - with a template `.env`
   if the list is long.
 - **Hot reload vs production mode.** If they differ meaningfully, say which
   to use and when.
@@ -107,7 +107,7 @@ Here's what a Run section for a typical Node API might look like:
 >   sleep 0.5
 > done
 > curl http://localhost:3000/health
-> # → {"status":"ok","version":"1.2.3"}
+> # -> {"status":"ok","version":"1.2.3"}
 > ```
 >
 > Logs are at `/tmp/api.log`. Stop by killing the port's listener (`$!`
@@ -122,6 +122,6 @@ Here's what a Run section for a typical Node API might look like:
 >
 > | Variable | Required | Default | Notes |
 > |---|---|---|---|
-> | `DATABASE_URL` | Yes | — | Postgres connection string |
+> | `DATABASE_URL` | Yes | - | Postgres connection string |
 > | `PORT` | No | `3000` | |
 > | `LOG_LEVEL` | No | `info` | `debug` / `info` / `warn` / `error` |

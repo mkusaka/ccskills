@@ -16,6 +16,7 @@
     "artifact-pr-review-description-composed-publish-flow",
     "artifact-report",
     "artifact-whiteboard-when-to-use-guidance",
+    "artifact-workshop",
     "building-llm-powered-applications-with-claude",
     "claude-code-configuration-guide",
     "claude-guide-unavailable-reference-fallback",
@@ -87,6 +88,7 @@
     "verify-cli-changes-example-for-verify-skill",
     "verify-server-api-changes-example-for-verify-skill",
     "verify-skill",
-    "whiteboard"
+    "whiteboard",
+    "whiteboard-description"
   ]
 }
