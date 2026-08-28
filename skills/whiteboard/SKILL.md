@@ -3,7 +3,7 @@ name: "whiteboard"
 description: "Creates a whiteboard Artifact for architecture sketches and planning feedback using a freehand canvas"
 metadata:
   originalName: "Skill: Whiteboard"
-  ccVersion: "2.1.246"
+  ccVersion: "2.1.247"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-whiteboard.md"
   source:
     owner: "Piebald-AI"
@@ -78,7 +78,11 @@ skill's base directory so `template.html` resolves):
 `node board.mjs --base <saved.html> --template template.html --inspect --png-out <board.png>`
 The summary gives `seq`, `publisherId`, `pageSha256`,
 `pageCodeAuthentic`, `note`, bounds and every element (`mine: true`
-marks `cl_` ids). Every write you make prints a `page sha256` covering
+marks `cl_` ids; arrows and lines carry their `x1,y1,x2,y2` endpoints).
+A large board's snapshot may be a JPEG rather than a PNG: the helper
+then saves it under a `.jpg` name, so read the file and format the
+summary's `snapshot` object reports rather than assuming the path you
+asked for. Every write you make prints a `page sha256` covering
 the full written page - the data block, the title, the snapshot bytes
 and the page code around them - keep the latest one. If `publisherId`
 is `"claude"` AND `pageSha256` matches the hash your last write printed
@@ -166,7 +170,8 @@ Both drawing passes are the same mechanics:
   endpoints along; it refuses if there is none - aim elsewhere and
   rerun; the summary's `landed:` lines say where everything actually
   went, so read them instead of trusting your requested coordinates),
-  refuses to retire anything that is not your own `cl_` id, drops the publisher-claimed snapshot picture (the page
+  refuses to retire anything that is not your own `cl_` id, retires a
+  labeled box's riding label with it (the summary says so), drops the publisher-claimed snapshot picture (the page
   renders a fresh one on the user's next publish, so a forged picture
   never persists under your name), bumps the board version and marks
   the publish as yours, and writes the skill template with the board
