@@ -3,7 +3,7 @@ name: "design"
 description: "Skill instructions for creating and publishing multi-artboard Claude Design canvas Artifacts with editable layouts and source-grounded visual recreation rules"
 metadata:
   originalName: "Skill: Design"
-  ccVersion: "2.1.246"
+  ccVersion: "2.1.247"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-design.md"
   source:
     owner: "Piebald-AI"
@@ -95,7 +95,11 @@ Everything lives in the one payload file:
   Pillow); if nothing is, say so and use fewer, smaller images - the
   whole document republishes on every save (16 MiB cap) and the editor
   silently drops any entry over 2 MiB (the helper refuses one). The
-  helper stores them (`--image`) and warns when one is large.
+  helper stores them (`--image`) and warns when one is large. If you
+  upload an image to the canvas with the Artifact tool's `upload_asset`
+  instead, reference it as `_blob/<id>` (the id from the result) with
+  NO leading slash, whatever url the result shows - the canvas page
+  only inlines that form; `/_blob/<id>` renders as a broken image.
 - **Referencing files from .dc.html** - every failure below is silent:
   store images as **BARE base64** (no `data:` prefix - the runtime adds
   the wrapper; a stored data:-URI double-wraps into a broken image);
