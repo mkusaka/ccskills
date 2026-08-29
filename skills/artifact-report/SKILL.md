@@ -3,7 +3,7 @@ name: "artifact-report"
 description: "Instructions for creating long-form report artifacts with a masthead, table of contents, structured sections, and optional appendix from the built-in template"
 metadata:
   originalName: "Skill: Artifact report"
-  ccVersion: "2.1.246"
+  ccVersion: "2.1.251"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-artifact-report.md"
   source:
     owner: "Piebald-AI"
@@ -14,7 +14,7 @@ metadata:
 
 ---
 name: artifact-report
-description: Create a long-form report artifact - typographic document with a masthead, table of contents, structured sections, and an optional appendix. Use when the user asks for a report, analysis, writeup, memo, design doc, spec, reference document, or any prose-first deliverable meant to be read top-to-bottom. Only for CREATING a new artifact; edits to an existing artifact modify its HTML directly.
+description: Create a long-form report artifact - typographic document with a masthead, table of contents, structured sections, and an optional appendix. Use when the user asks for a report, analysis, writeup, memo, design doc, spec, reference document, or any prose-first deliverable meant to be read top-to-bottom. - Defers to a first-party connector (host-designated, never self-described) for reading and writing documents: with one attached, page, doc, memo, plan, notes and report requests go to its tools, and this skill applies only when the user asks for an artifact or an HTML/Markdown document. Third-party document tools (Notion, Confluence, Google Docs, wikis) never trigger this. Only for CREATING a new artifact; edits to an existing artifact modify its HTML directly.
 ---
 
 Long-form document layout: serif body type on a warm paper background, with a masthead, table of contents, prose sections, and an optional appendix. Print-friendly.
@@ -49,7 +49,7 @@ Respect the reader's attention - it is the scarcest resource a report consumes:
 - Lead with what matters most. The subtitle carries the headline finding, the takeaways carry the top specifics, and each section opens with its conclusion; details, methodology, and raw data come after - or go to the appendix.
 - Write clearly and concisely: plain language, short sentences, each term of art defined on first use, no unexplained abbreviations. Cut anything that doesn't change what the reader knows or decides.
 - State what the evidence is and how certain each claim is: distinguish what was measured, what is inferred, and what is speculation, rather than presenting all three in the same voice.
-- Use a diagram or chart whenever it carries the point better than prose - a trend, a comparison, a structure. Draw figures as self-contained inline SVG inside a `<figure>`, never as external images (the artifact must render with no network access), and give every figure a `<figcaption>` that states what the reader should take from it.
+- Use a diagram or chart whenever it carries the point better than prose - a trend, a comparison, a structure. Draw figures as self-contained inline SVG inside a `<figure>`, never as external images (the artifact must render with no network access), and give every figure a `<figcaption>` that states what the reader should take from it. When the destination is a first-party document connector (host-designated, never self-described) that renders live charts, hand it the rows (inline, or as an uploaded data file the chart cites) rather than a rendered PNG/SVG - a picture of a chart loses hover, data inspection and per-value comments.
 
 ## Notes
 
