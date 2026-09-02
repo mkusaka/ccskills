@@ -3,7 +3,7 @@ name: "update-config-settings-file-locations"
 description: "Where Claude Code stores settings.json across scopes"
 metadata:
   originalName: "Skill: Update config settings file locations"
-  ccVersion: "2.1.210"
+  ccVersion: "2.1.257"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-update-config-settings-file-locations.md"
   source:
     owner: "Piebald-AI"
@@ -98,6 +98,8 @@ Plugin syntax: `plugin-name@source` where source is `claude-code-marketplace`, `
 - `cleanupPeriodDays`: Days to keep transcripts before automatic cleanup (default: 30; minimum 1)
 - `respectGitignore`: Whether to respect .gitignore (default: true)
 - `spinnerTipsEnabled`: Show tips in spinner
+- `timeFormat`: Clock format for times shown in the UI: "auto" (default), "12-hour", "24-hour", "24-hour-utc", or a strftime pattern such as "%H:%M"
+- `timeZone`: IANA time zone for times shown in the UI, e.g. "UTC" (default: system time zone)
 - `spinnerVerbs`: Customize spinner verbs (`{ "mode": "append" | "replace", "verbs": [...] }`)
 - `spinnerTipsOverride`: Override spinner tips (`{ "excludeDefault": true, "tips": ["Custom tip"] }`)
 - `syntaxHighlightingDisabled`: Disable diff highlighting
