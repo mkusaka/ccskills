@@ -3,7 +3,7 @@ name: "claude-code-configuration-guide"
 description: "Skill instructions for answering Claude Code configuration questions by checking the running build, bundled references, and current documentation"
 metadata:
   originalName: "Skill: Claude Code configuration guide"
-  ccVersion: "2.1.251"
+  ccVersion: "2.1.261"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-claude-code-configuration-guide.md"
   source:
     owner: "Piebald-AI"
@@ -56,7 +56,7 @@ For any question about Claude in Slack, Claude Tag, `@Claude`, or `/install-slac
 
 ## Plugin eval (`claude plugin eval`) and `/skill-doctor`
 
-This skill also covers the plugin evaluation harness (`claude plugin eval`, `claude plugin eval init`) and the `/skill-doctor` usage report. Both are in early access and newer than most training data, and there is no public docs page for them yet - so never answer about them from memory. The Current Build section says whether plugin eval is enabled in this session; `references/plugin-eval-quickref.md` is the orientation and `references/plugin-eval.md` is the full offline floor (case file format, every grader, every flag, the v1 results JSON field by field, how the sandbox works, CI, troubleshooting). Read them before answering, and if plugin eval is not enabled here, lead with that and the enablement facts rather than saying the command doesn't exist.
+This skill also covers the plugin evaluation harness (`claude plugin eval`, `claude plugin eval init`) and the `/skill-doctor` usage report. Plugin eval is in early access; `/skill-doctor` is generally available in current releases. Both are newer than most training data, and there is no public docs page for them yet - so never answer about them from memory. The Current Build section says whether plugin eval is enabled in this session; `references/plugin-eval-quickref.md` is the orientation and `references/plugin-eval.md` is the full offline floor (case file format, every grader, every flag, the v1 results JSON field by field, how the sandbox works, CI, troubleshooting). Read them before answering, and if plugin eval is not enabled here, lead with that and the enablement facts rather than saying the command doesn't exist.
 
 ## When you can't reach the network
 
