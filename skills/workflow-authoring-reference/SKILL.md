@@ -3,7 +3,7 @@ name: "workflow-authoring-reference"
 description: "Skill reference for authoring Workflow scripts, covering script persistence, metadata, agent hooks, isolation, concurrency, budgeting, quality patterns, and resume behavior"
 metadata:
   originalName: "Skill: Workflow authoring reference"
-  ccVersion: "2.1.257"
+  ccVersion: "2.1.260"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-workflow-authoring-reference.md"
   source:
     owner: "Piebald-AI"
@@ -66,6 +66,7 @@ Script body hooks:
 - workflow(nameOrRef: string | {scriptPath: string}, args?: any): Promise<any> — run another workflow inline as a sub-step and return whatever it returns. Pass a name to invoke a saved workflow (same registry as {name: "..."}), or {scriptPath} to run a script file you Wrote earlier. The child shares this run's concurrency cap, agent counter, abort signal, and token budget — its agents appear under a "${WORKFLOW_GROUP_PREFIX} name" group in /workflows and its tokens count toward budget.spent(). The args param becomes the child's `args` global. Nesting is one level only: workflow() inside a child throws. Throws on unknown name / unreadable scriptPath / child syntax error; catch to handle gracefully.
 
 Subagents are told their final text IS the return value (not a human-facing message), so they return raw data. For structured output, use the schema option — validation happens at the tool-call layer so the model retries on mismatch.
+Schemas need {type: 'object', properties: {...}} at root and required ⊆ properties; unsatisfiable ones throw at agent().
 
 Workflow agents can reach all session-connected MCP tools via ToolSearch — schemas load on demand per agent. Caveat: interactively-authenticated MCP servers (e.g. claude.ai) may be absent in headless/cron runs.
 
