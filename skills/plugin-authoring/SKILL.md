@@ -3,7 +3,7 @@ name: "plugin-authoring"
 description: "Guides function-hook plugin development using generated type declarations, local loading and validation, UI rendering hooks, dispatch lifetimes, and registered tools"
 metadata:
   originalName: "Skill: Plugin authoring"
-  ccVersion: "2.1.261"
+  ccVersion: "2.1.267"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-plugin-authoring.md"
   source:
     owner: "Piebald-AI"
@@ -33,7 +33,7 @@ file), exporting `register(on, options)`. `on(event, matcher?, hook)` adds a
 hook; `options` holds the values of the fields the manifest's `userConfig`
 declares. Every hook has the shape `($, e, next)`: `$` is the engine
 interface (display, model, session, prompt, tools, filesystem, store,
-clock, network, host commands and the rest), `e` is the event's input as a plain value,
+clock, network, host commands, settings, environment and the rest), `e` is the event's input as a plain value,
 and `next(e)` continues to the other plugins and then the engine's own
 behaviour, resolving to the event's result. A hook that returns without
 calling `next` answers for itself; one that calls `next({ ...e, ... })`
@@ -45,9 +45,9 @@ the factory.
 The events cover tool calls and their descriptions, the prompt as
 submitted, the system prompt's sections and the first message's context
 blocks, what the interface draws, the turn's start, steps and completion,
-the session's start, skills, subagents and attribution text. Which of them a
-feature is, and what it needs from `$`, are the two questions worth
-settling before writing anything.
+the session's start and its inbound deliveries, skills, subagents and
+attribution text. Which of them a feature is, and what it needs from `$`,
+are the two questions worth settling before writing anything.
 
 ## The types are the reference
 
@@ -80,11 +80,11 @@ a fresh environment and the previous environment's timers are dropped.
 Options for a plugin loaded this way are read from settings under
 `pluginConfigs`, keyed by the plugin's `<name>` (or `<name>@inline`).
 
-Run with `claude --debug` while developing. The debug log is where the
-engine names a module it did not load and why, a hook that threw or overran
-its budget, and a result it refused. A hook that fails is skipped and the
-chain continues without it, so a plugin that seems to do nothing has
-usually been told why there.
+Run with `claude --debug` while developing. A hook that fails is skipped and
+the chain continues without it, unless its registration's `.catch` handler
+answers in its place; the transcript says so once, in a dim line naming the
+plugin, the event and the reason, as it names a module that did not load. The debug log has every occurrence and each result the engine
+refused, so a plugin that seems to do nothing has usually been told why.
 
 ## Drawing: ui.render
 
@@ -99,20 +99,20 @@ tree sized to `columns` stays right; a change of height alone re-draws
 nothing. `$.ui.invalidate` asks for a redraw when the hook's own state
 changed.
 
-Build trees from the table `$.ui.resolve(e)` resolves to: the element
-constructors of the surface `e` is on, usable as JSX tags. The tables
-differ per surface, and narrowing `e.surface` narrows the table, so check
-the `Elements` type before reaching for an element on both. Return a tree,
+Build trees from the table `$.ui.resolve(e)` returns: the surface's element
+constructors, destructured into the hook's JSX tags (a module has no element
+globals). Tables differ per surface and narrowing `e.surface` narrows the
+table: check `Elements` before using an element on both. Return a tree,
 or `next({ ...e, props })` to change what the engine draws, or `next(e)` to
 leave it. A tree that does not validate (an element the surface lacks, a
 prop the element does not take, a child where none goes) is not drawn: the
 engine draws its own component instead and writes a line to the debug log
 beginning `ui.render (<Component>): a hook returned a tree that does not
 validate`, followed by the reason. When a drawing silently falls back,
-that line and the element's props type are the two things to read. A
-button, a text field and a select keep their handlers in the plugin and
-raise `ui.press`, `ui.input` and `ui.select`; keys reach one only while it
-has focus, and Esc returns to the prompt.
+that line and the element's props type are the two things to read. Buttons,
+text fields and selects keep their handlers in the plugin and raise
+`ui.press`, `ui.input` and `ui.select`; keys reach one only while it has
+focus, Esc returns to the prompt. A keyed `Box` scopes `hover` styles.
 
 ## Work that outlives a dispatch
 
