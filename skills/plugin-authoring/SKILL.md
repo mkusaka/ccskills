@@ -3,7 +3,7 @@ name: "plugin-authoring"
 description: "Guides function-hook plugin development using generated type declarations, local loading and validation, UI rendering hooks, dispatch lifetimes, and registered tools"
 metadata:
   originalName: "Skill: Plugin authoring"
-  ccVersion: "2.1.267"
+  ccVersion: "2.1.268"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-plugin-authoring.md"
   source:
     owner: "Piebald-AI"
@@ -89,10 +89,10 @@ refused, so a plugin that seems to do nothing has usually been told why.
 ## Drawing: ui.render
 
 A `ui.render` hook receives one component instance. `e.component` says
-which component, `e.surface` where it is drawn (`terminal` or `desktop`),
-`e.requestId` which instance (the tool_use_id for a tool row or dialog,
-the message id for a message, the agent id for a spinner), `e.props` the
-component's plain-data props, and `e.viewport`, when the surface has
+which component, `e.surface` where it is drawn (`terminal`, `desktop` or
+`mobile`), `e.requestId` which instance (the tool_use_id for a tool row or
+dialog, the message id for a message, the agent id for a spinner), `e.props`
+the component's plain-data props, and `e.viewport`, when the surface has
 measured, the size it draws into in character cells: `columns` and `rows`.
 A change of width re-runs every hooked site once the resize settles, so a
 tree sized to `columns` stays right; a change of height alone re-draws
@@ -101,12 +101,12 @@ changed.
 
 Build trees from the table `$.ui.resolve(e)` returns: the surface's element
 constructors, destructured into the hook's JSX tags (a module has no element
-globals). Tables differ per surface and narrowing `e.surface` narrows the
-table: check `Elements` before using an element on both. Return a tree,
-or `next({ ...e, props })` to change what the engine draws, or `next(e)` to
-leave it. A tree that does not validate (an element the surface lacks, a
-prop the element does not take, a child where none goes) is not drawn: the
-engine draws its own component instead and writes a line to the debug log
+globals). Tables differ per surface, see `Elements` (`mobile` has no `Input`,
+`Select` or `Client`, `terminal` no `Svg`); narrowing `e.surface` narrows the
+table. Return a tree, or `next({ ...e, props })` to change what the engine
+draws, or `next(e)` to leave it. A tree that does not validate (an element
+the surface lacks, a prop it does not take, a child where none goes) is not
+drawn: the engine draws its own instead and writes to the debug log a line
 beginning `ui.render (<Component>): a hook returned a tree that does not
 validate`, followed by the reason. When a drawing silently falls back,
 that line and the element's props type are the two things to read. Buttons,
