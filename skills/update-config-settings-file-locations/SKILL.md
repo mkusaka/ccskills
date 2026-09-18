@@ -3,7 +3,7 @@ name: "update-config-settings-file-locations"
 description: "Where Claude Code stores settings.json across scopes"
 metadata:
   originalName: "Skill: Update config settings file locations"
-  ccVersion: "2.1.257"
+  ccVersion: "2.1.275"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-update-config-settings-file-locations.md"
   source:
     owner: "Piebald-AI"
@@ -43,6 +43,7 @@ Settings load in order: user → project → local (later overrides earlier).
 - Exact match: `"Bash(npm run test)"`
 - Prefix wildcard: `"Bash(git *)"` - matches `git`, `git status`, `git commit`, etc.
 - Tool only: `"Read"` - allows all Read operations
+- File paths: `"Edit(src/**)"` - path rules in `permissions` use `Edit(path)` for every file-writing tool (Write, Edit, NotebookEdit) and `Read(path)` for reads. `Write(path)`, `NotebookEdit(path)` and `Glob(path)` rules are not matched by file permission checks. Bare tool names (`"Write"`), deny/ask `Tool(param:value)` rules and hook `if` conditions still use each tool's own name
 
 ### Environment Variables
 ```json
