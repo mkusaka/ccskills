@@ -3,7 +3,7 @@ name: "update-claude-code-config"
 description: "Skill for modifying Claude Code configuration file (settings.json)"
 metadata:
   originalName: "Skill: Update Claude Code Config"
-  ccVersion: "2.1.118"
+  ccVersion: "2.1.282"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-update-claude-code-config.md"
   source:
     owner: "Piebald-AI"
@@ -13,7 +13,7 @@ metadata:
   variables:
     - "SETTINGS_FILE_LOCATION_PROMPT"
     - "HOOKS_CONFIGURATION_PROMPT"
-    - "CONSTRUCTING_HOOK_PROMPT"
+    - "CONSTRUCTING_HOOK_PROMPT_FN"
 ---
 
 # Update Config Skill
@@ -91,7 +91,7 @@ ${SETTINGS_FILE_LOCATION_PROMPT}
 
 ${HOOKS_CONFIGURATION_PROMPT}
 
-${CONSTRUCTING_HOOK_PROMPT}
+${CONSTRUCTING_HOOK_PROMPT_FN()}
 
 ## Example Workflows
 
