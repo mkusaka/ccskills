@@ -3,7 +3,7 @@ name: "loop-slash-command-dynamic-mode"
 description: "Parses user input into an interval and prompt for scheduling recurring or dynamically self-paced loop executions"
 metadata:
   originalName: "Skill: /loop slash command (dynamic mode)"
-  ccVersion: "2.1.211"
+  ccVersion: "2.1.284"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-loop-slash-command-dynamic-mode.md"
   source:
     owner: "Piebald-AI"
@@ -11,6 +11,7 @@ metadata:
     ref: "main"
     path: "system-prompts/skill-loop-slash-command-dynamic-mode.md"
   variables:
+    - "PR_STEWARD_LOOP_CHECK_BLOCK"
     - "ADDITIONAL_PARSING_NOTES_FN"
     - "CRON_CONVERSION_RULES"
     - "CRON_CREATE_TOOL_NAME"
@@ -40,7 +41,7 @@ Examples:
 - `check the deploy` → no interval → dynamic mode, prompt `check the deploy` (rule 3)
 - `check every PR` → no interval → dynamic mode, prompt `check every PR` (rule 3 — "every" not followed by time)
 - `5m` → empty prompt → show usage
-${ADDITIONAL_PARSING_NOTES_FN()}
+${PR_STEWARD_LOOP_CHECK_BLOCK}${ADDITIONAL_PARSING_NOTES_FN()}
 ## Fixed-interval mode (rules 1 and 2)
 
 Convert the interval to a cron expression:
