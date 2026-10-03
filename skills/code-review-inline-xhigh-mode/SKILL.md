@@ -3,7 +3,7 @@ name: "code-review-inline-xhigh-mode"
 description: "Extra-high inline /code-review prompt that runs ten finder angles, deduplicates without verification, sweeps for gaps, and returns up to fifteen findings"
 metadata:
   originalName: "Skill: Code Review inline xhigh mode"
-  ccVersion: "2.1.206"
+  ccVersion: "2.1.288"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-code-review-inline-xhigh-mode.md"
   source:
     owner: "Piebald-AI"
@@ -11,6 +11,8 @@ metadata:
     ref: "main"
     path: "system-prompts/skill-code-review-inline-xhigh-mode.md"
   variables:
+    - "FORMAT_FINDINGS_LIMIT_LABEL_FN"
+    - "MAX_FINDINGS"
     - "REVIEW_ANGLE_SHARED_INTRO"
     - "REVIEW_CORRECTNESS_ANGLES"
     - "REVIEW_REUSE_ANGLE"
@@ -23,7 +25,7 @@ metadata:
     - "REVIEW_OUTPUT_FORMATTER_FN"
 ---
 
-`xhigh effort → 10 inline angles → dedup (no verify) → sweep → ≤15 findings`
+`xhigh effort → 10 inline angles → dedup (no verify) → sweep → ${FORMAT_FINDINGS_LIMIT_LABEL_FN(MAX_FINDINGS)}`
 
 You are reviewing for **recall** at extra-high effort: catch every real bug. At
 this level, catching real bugs matters more than avoiding false positives — a
@@ -77,4 +79,4 @@ setup/teardown asymmetry in tests; config defaults flipped.
 Surface **up to 8 additional candidates**, each naming a defect not already on
 the list. If nothing new, return nothing from this phase — do not pad.
 
-${FORMAT_REVIEW_OUTPUT_WITH_MINIMUM_FINDINGS_FN(REVIEW_OUTPUT_FORMATTER_FN)(15)}
+${FORMAT_REVIEW_OUTPUT_WITH_MINIMUM_FINDINGS_FN(REVIEW_OUTPUT_FORMATTER_FN,15)(MAX_FINDINGS)}
