@@ -9,7 +9,6 @@
     "artifact-explainer",
     "artifact-pr-review-description-composed-publish-flow",
     "artifact-report",
-    "artifact-whiteboard-when-to-use-guidance",
     "claude-api-managed-agents-onboarding-source-tier",
     "claude-code-configuration-guide",
     "claude-guide-unavailable-reference-fallback",
@@ -36,6 +35,7 @@
     "doctor-prompt-audit-configuration-scope",
     "doctor-slash-command",
     "doctor-slash-command-description",
+    "doctor-usage-flagged-check",
     "dynamic-pacing-loop-execution",
     "dynamic-pacing-loop-execution-re-arm-decision",
     "explain-usage-measured-usage-slash-command",
@@ -50,7 +50,10 @@
     "loop-self-pacing-mode-re-arm-decision",
     "loop-slash-command-dynamic-mode",
     "mod-github-sharing-consent",
-    "multiplayer-whiteboard-description",
+    "mod-plugin-packaging-any-plan",
+    "mod-plugin-packaging-consent",
+    "mod-plugin-packaging-organization-plans",
+    "mod-plugin-packaging-personal-plans",
     "plugin-eval-authoring-interview",
     "prototype-description",
     "prototype-runtime-capabilities-guidance",
@@ -73,7 +76,6 @@
     "update-config-settings-file-locations",
     "verify-cli-changes-example-for-verify-skill",
     "verify-server-api-changes-example-for-verify-skill",
-    "whiteboard-description",
     "workflow-authoring-reference"
   ]
 }
