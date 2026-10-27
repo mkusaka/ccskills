@@ -3,11 +3,7 @@ on:
   workflow_dispatch:
   schedule:
     - cron: '17 3 * * *'
-permissions:
-  checks: read
-  contents: write
-  pull-requests: write
-  statuses: read
+permissions: {}
 concurrency:
   group: sync-piebald-skills
   cancel-in-progress: false

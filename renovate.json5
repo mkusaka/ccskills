@@ -34,5 +34,11 @@
       matchManagers: ["github-actions"],
       matchUpdateTypes: ["minor", "patch", "digest", "pinDigest"],
     },
+    {
+      description: "Keep npm release age in sync with pnpm minimumReleaseAge (security:minimumReleaseAgeNpm sets 3 days)",
+      matchDatasources: ["npm"],
+      matchUpdateTypes: ["major", "minor", "patch"],
+      minimumReleaseAge: "7 days",
+    },
   ],
 }
