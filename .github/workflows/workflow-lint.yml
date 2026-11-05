@@ -30,7 +30,7 @@ jobs:
       - name: Download jactionlint
         env:
           # renovate: datasource=github-releases depName=jdx/jactionlint
-          JACTIONLINT_VERSION: v2.3.0
+          JACTIONLINT_VERSION: v2.4.0
           GITHUB_TOKEN: ${{ github.token }}
         run: |
           archive="jactionlint_${JACTIONLINT_VERSION#v}_linux_amd64.tar.gz"
