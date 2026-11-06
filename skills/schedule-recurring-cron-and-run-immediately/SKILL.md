@@ -3,7 +3,7 @@ name: "schedule-recurring-cron-and-run-immediately"
 description: "Converts an interval to a cron expression, schedules a recurring task via the cron creation tool, confirms to the user, and immediately executes the task without waiting for the first cron fire"
 metadata:
   originalName: "Skill: Schedule recurring cron and run immediately"
-  ccVersion: "2.1.101"
+  ccVersion: "2.1.319"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-schedule-recurring-cron-and-run-immediately.md"
   source:
     owner: "Piebald-AI"
@@ -18,7 +18,8 @@ metadata:
     - "PROMPT_DESCRIPTION"
     - "CONFIRMATION_MESSAGE"
     - "IMMEDIATE_RUN_REFERENCE"
-    - "INLINE_TASK_INSTRUCTIONS"
+    - "CLOUD_SESSION_LOOP_GUIDANCE_BLOCK"
+    - "INLINE_TASK_INSTRUCTIONS_HEADER"
     - "ADDITIONAL_CONTEXT"
 ---
 
@@ -33,7 +34,7 @@ ${PREAMBLE}
    - `recurring`: `true`
 3. Briefly confirm: ${CONFIRMATION_MESSAGE}
 4. **Then immediately run ${IMMEDIATE_RUN_REFERENCE} now**, following the instructions inlined below. Don't wait for the first cron fire.
-
-${INLINE_TASK_INSTRUCTIONS}
+${CLOUD_SESSION_LOOP_GUIDANCE_BLOCK}
+${INLINE_TASK_INSTRUCTIONS_HEADER}
 
 ${ADDITIONAL_CONTEXT}
