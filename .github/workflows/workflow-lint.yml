@@ -55,7 +55,7 @@ jobs:
       - name: Download ghalint
         env:
           # renovate: datasource=github-releases depName=suzuki-shunsuke/ghalint
-          GHALINT_VERSION: v1.5.7
+          GHALINT_VERSION: v1.6.0
           GITHUB_TOKEN: ${{ github.token }}
         run: |
           archive="ghalint_${GHALINT_VERSION#v}_linux_amd64.tar.gz"
