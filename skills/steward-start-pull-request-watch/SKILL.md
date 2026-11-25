@@ -3,7 +3,7 @@ name: "steward-start-pull-request-watch"
 description: "Sets up a watch with or without an initial review, avoids duplicate reviews, and hands off to the first pass"
 metadata:
   originalName: "Skill: Steward start pull request watch"
-  ccVersion: "2.1.330"
+  ccVersion: "2.1.331"
   sourceUrl: "https://github.com/Piebald-AI/claude-code-system-prompts/blob/main/system-prompts/skill-steward-start-pull-request-watch.md"
   source:
     owner: "Piebald-AI"
@@ -19,6 +19,7 @@ metadata:
     - "TERMS_SHOWN_NOTE"
     - "FORMAT_QUOTED_LINES_FN"
     - "STARTUP_SUMMARY_LINES"
+    - "BUILD_STARTUP_REPLY_INSTRUCTIONS_FN"
     - "WATCH_TERMS"
     - "AUTO_MERGE_WARNING_GUIDANCE"
     - "USE_FOLDED_TERMS"
@@ -27,6 +28,7 @@ metadata:
     - "BUILD_WATCH_RULES_FN"
     - "WATCH_COMMANDS"
     - "STOP_COMMAND"
+    - "UNCOMMITTED_WORK_NOTICE_SHOWN"
     - "BUILD_REVIEW_AGENT_GUIDANCE_FN"
     - "REVIEW_AGENT_SETTINGS"
     - "REMOTE_PULL_REQUEST_HEAD"
@@ -40,9 +42,9 @@ metadata:
 
 # /${STEWARD_COMMAND_NAME}: ${SHOULD_REVIEW?`review pull request #${WATCHED_PULL_REQUEST.pr}, then watch it`:`watch pull request #${WATCHED_PULL_REQUEST.pr}`}
 
-${COMMAND_LEADING_NOTE}${TERMS_ALREADY_SHOWN?TERMS_SHOWN_NOTE:"Before any tool call, begin your reply with these lines, word for word:"}
+${COMMAND_LEADING_NOTE}${TERMS_ALREADY_SHOWN?`${TERMS_SHOWN_NOTE}
 
-${FORMAT_QUOTED_LINES_FN(STARTUP_SUMMARY_LINES)}${WATCH_TERMS.autoMerge===void 0?"":`
+${FORMAT_QUOTED_LINES_FN(STARTUP_SUMMARY_LINES)}`:BUILD_STARTUP_REPLY_INSTRUCTIONS_FN(STARTUP_SUMMARY_LINES)}${WATCH_TERMS.autoMerge===void 0?"":`
 
 ${AUTO_MERGE_WARNING_GUIDANCE}`}
 
@@ -54,7 +56,7 @@ ${BUILD_WATCH_RULES_FN(WATCHED_PULL_REQUEST,WATCH_COMMANDS,STOP_COMMAND)}
 
 ## First, what is here
 
-Add a line on any unpushed commits (they go up) and uncommitted changes (they don't): `${WATCH_COMMANDS.status}`.
+Add a line on any unpushed commits (they go up)${UNCOMMITTED_WORK_NOTICE_SHOWN?"":" and uncommitted changes (they don't)"}: `${WATCH_COMMANDS.status}`.${UNCOMMITTED_WORK_NOTICE_SHOWN?` Claude Code itself has just told the user that ${USER_WATCH_COMMAND} didn't commit their uncommitted work, so it isn't in the pull request. Don't repeat that.`:""}
 
 ${SHOULD_REVIEW?`## 1. Don't do it twice
 
